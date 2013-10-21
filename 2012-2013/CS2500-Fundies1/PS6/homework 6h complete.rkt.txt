@@ -1,0 +1,1426 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname |homework 6h complete.rkt|) (read-case-sensitive #t) (teachpacks ((lib "more-io.ss" "installed-teachpacks"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "more-io.ss" "installed-teachpacks")))))
+(require 2htdp/image)
+
+;;;;;Honors Homework 6
+;;;;;Nicholas Jones
+;;;;;Lochlainn Macdonald
+
+
+(define-struct examgrade (student points comment))
+
+;;Some test ExamGrades and LoEGs:
+(define test-a 
+  (list (make-examgrade "Bob" 50 "Good job")
+        (make-examgrade "Chris" 20 "Not your best")
+        (make-examgrade "David" 58 "Perfect!")
+        (make-examgrade "Tom" 42 "Not bad")))
+(define test-a-ordered
+  (list (make-examgrade "David" 58 "Perfect!")
+        (make-examgrade "Bob" 50 "Good job")
+        (make-examgrade "Tom" 42 "Not bad")
+        (make-examgrade "Chris" 20 "Not your best")))
+(define test-b
+  (list (make-examgrade "Solo" 1 "Only one")))
+(define test-c-regular
+  (list (make-examgrade "Amal Ahmed" 58 "Aced it!") 
+        (make-examgrade "Olin Shivers" 30 "Not so good")))
+(define test-c-honors
+  (list (make-examgrade "Amal Ahmed" 44 "Wow!") 
+        (make-examgrade "Olin Shivers" 25 "")))
+(define test-d-regular
+  (list (make-examgrade "Amal Ahmed" 58 "Aced it!") 
+        (make-examgrade "Olin Shivers" 30 "Not so good")))
+(define test-d-honors
+    (list (make-examgrade "Leena Razzaq" 38 "")
+        (make-examgrade "Olin Shivers" 25 "")))
+
+
+;; An ExamGrade is a (make-examgrade String Number String)
+
+;; A [ListOf X] is one of:
+;; - empty
+;; - (cons X [ListOf X])
+
+;; A LOEG (list of exam grades) is one of: 
+;; - empty 
+;; - (cons ExamGrade LOEG) 
+
+
+;;Highest:
+;;Contract: highest : [Listof ExamGrade] -> ExamGrade
+;;Purpose: highest finds the ExamGrade with the highest Points value out of a
+;;[Listof ExamGrade].
+
+;;Template:
+;;(define (high-temp loeg)
+;;;(cond [(empty? ...loeg) ...]
+;;;;[(< (examgrade-points (first loeg))
+;;;;;;;;(examgrade-points ...) ...]
+;;;;[else ...]))
+
+
+(define (highest loeg)
+  (cond [(empty? (rest loeg)) (first loeg)]
+        [else (local ((define ans (highest (rest loeg))))
+                (cond [(< (examgrade-points (first loeg)) 
+                          (examgrade-points ans)) ans]
+                      [else (first loeg)]))]))
+
+;;Examples/Tests:
+(check-expect (highest test-a) 
+              (make-examgrade "David" 58 "Perfect!"))
+(check-expect (highest test-b)
+              (make-examgrade "Solo" 1 "Only one"))
+
+;;Grade-Order:
+;;Contract: grade-order : [Listof ExamGrade] -> [ListOf ExamGrade]
+;;Purpose: grade-order goes through a list of exam grades, and sorts
+;;them from largest to smallest (based on the value of examgrade-points).
+
+;;Template:
+#;(define (grade-temp loeg)
+  (cond [(empty? loeg) empty]
+        [... (examgrade-points (... loeg)) ...
+             (grade-order (...) ...) ...]))
+
+
+(define (grade-order loeg)
+  (cond [(empty? loeg) empty]
+        [else
+         (cons (highest loeg)
+               (grade-order (remove (highest loeg) loeg)))]))
+
+;;Examples/Tests:
+(check-expect (grade-order test-a) test-a-ordered)
+(check-expect (grade-order test-b) test-b)
+(check-expect (grade-order empty) empty)
+
+;;Merge-Ordered:
+;;Contract: merge-ordered : 
+;;[ListOf ExamGrade] [ListOf ExamGrade] -> [ListOf ExamGrade]
+;;Purpose: Merge-Ordered consumes two lists of exam grades, compiles them into
+;;one list of exam grades, and orders them from highest to lowest (based upon
+;;examgrade-points).
+
+;;Template:
+#;(define (merge-temp loeg1 loeg2)
+    (... (append loeg1 loeg2)))
+
+(define (merge-ordered loeg1 loeg2)
+  (grade-order (append loeg1 loeg2)))
+
+;;Examples/Tests:
+(check-expect (merge-ordered test-a test-b)
+              (append test-a-ordered test-b)) ;;A fast way to write it out
+(check-expect (merge-ordered test-a empty)
+              test-a-ordered)
+(check-expect (merge-ordered test-b empty)
+              (list (make-examgrade "Solo" 1 "Only one")))
+
+;;Exercise 2
+
+;;NOTE: the majority of these functions do not work on their own, and thus
+;;do not possess their own tests.  However, they are tested by the main
+;;function, which proves that they do in fact work.
+
+
+;;Coalesce-Check:
+;;Contract: coalesce-check : ExamGrade [ListOf ExamGrade] -> ExamGrade
+;;Purpose: coalesce-check looks for any occurrences of a student
+;;in a list of exam grades, specified by the student of the 
+;;given exam grade.
+
+;;Template:
+#;(define (coalesce-temp eg loeg)
+    (cond [(empty? loeg) ...]
+          [string=? (examgrade-student eg)
+                    (examgrade-student ... loeg) ...]
+          [else (coalesce-temp eg (rest loeg))]))
+
+(define (coalesce-check eg loeg)
+  (cond [(empty? loeg) empty]
+        [(string=? (examgrade-student eg)
+                   (examgrade-student (first loeg)))
+         (first loeg)]
+        [else (coalesce-check eg (rest loeg))]))
+
+;;Coalesce-Results:
+;;Contract: coalesce-results : [ListOf ExamGrade] -> [ListOf ExamGrade]
+;;Purpose: coalesce-results consumes a list of exam grades and produces
+;;one with either combined results for students with two exams,
+;;or noted (missing ___) results for students with one exam.
+
+;;Template:
+#;(define (coalesce-temp-b loeg)
+    (cond [(empty? (coalesce-check ...))
+           (cons (make-examgrade
+                  ...
+                  ...
+                  ...)
+                 (rest loeg))]
+          [else
+           (cons (make-examgrade
+                  ...
+                  (+ (examgrade-points ...)
+                     (examgrade-points ...))
+                  ...)
+                 (rest loeg))]))
+
+(define (coalesce-results loeg)
+  (cond [(empty? (coalesce-check (first loeg) (rest loeg)))
+         (cons (make-examgrade
+                (examgrade-student (first loeg))
+                (examgrade-points (first loeg))
+                (missing-fix (examgrade-comment (first loeg)))) 
+               (rest loeg))]
+        [else
+         (cons (make-examgrade
+                (examgrade-student (first loeg))
+                (+ (examgrade-points (first loeg))
+                   (examgrade-points 
+                    (coalesce-check (first loeg) (rest loeg))))
+                "")
+               (remove 
+                (coalesce-check (first loeg) (rest loeg))
+                (rest loeg)))]))
+
+;;Honors-Totals:
+;;Contract: honors-totals : [ListOf ExamGrade] [ListOf ExamGrade] ->
+;;[ListOf ExamGrade]
+;;Purpose: honors-totals consumes a list of honors exam grades and a list of
+;;regular exam grades, and combines them into one single list that has
+;;sums for students with multiple exams, is alphabetized, and has
+;;removed/missing (missing ___) comments for each student.
+
+;;Template:
+#;(define (honors-totals loeg-a loeg-b)
+    (coalesce-results (append loeg-a loeg-b))...)
+
+
+(define (honors-totals loeg-r loeg-h)
+  (alphabetize 
+   (honors-coalesce 
+    (coalesce-results (append (fix loeg-r 'r) (fix loeg-h 'h))))))
+
+
+;;Honors-Coalesce:
+;;Contract: honors-coalesce : [ListOf ExamGrade] -> [ListOf ExamGrade]
+;;Purpose: honors-coalesce checks every piece of the list against the
+;;remaining parts of the list, to make sure that there are no
+;;reoccurrences of list entries.
+
+;;Template:
+#;(define (honors-coal-temp loeg)
+    (cond [(empty? loeg) empty]
+          [else
+           (cons
+             (first loeg)
+             (honors-coalesce (...(rest loeg)...)))]))
+(define (honors-coalesce loeg)
+  (cond [(empty? loeg) empty]
+        [(empty? (rest loeg)) (cons (first loeg) empty)]
+        [else 
+         (cons
+          (first loeg)
+          (honors-coalesce 
+           (coalesce-results (rest loeg))))]))
+
+;;Fix:
+;;Contract: fix : [ListOf ExamGrade] Symbol -> [ListOf ExamGrade]
+;;Purpose: fix takes a list of examgrades and a symbol specifying whether
+;;it is regular or honors, and then changes the comment within the structure
+;;to reflect this information.
+
+;;Template:
+#;(define (fix-temp loeg type)
+    (cond [(symbol=? type ...)
+           (map ... loeg)]
+          [(symbol=? type ...)
+           (map ... loeg)]))
+
+(define (fix loeg type)
+  (local ((define (h-comment eg)
+            (make-examgrade
+             (examgrade-student eg)
+             (examgrade-points eg)
+             "honors"))
+          (define (r-comment eg)
+            (make-examgrade
+             (examgrade-student eg)
+             (examgrade-points eg)
+             "regular")))
+    (cond [(symbol=? type 'h)
+           (map h-comment loeg)]
+          [(symbol=? type 'r)
+           (map r-comment loeg)])))
+
+;;Examples/Tests:
+(check-expect (fix test-c-honors 'h) 
+              (list (make-examgrade "Amal Ahmed" 44 "honors") 
+                    (make-examgrade "Olin Shivers" 25 "honors")))
+(check-expect (fix test-c-regular 'r)
+              (list (make-examgrade "Amal Ahmed" 58 "regular")
+                    (make-examgrade "Olin Shivers" 30 "regular")))
+
+
+;;Missing-Fix:
+;;Contract: missing-fix : str -> str
+;;Purpose: missing-fix acts as a helper function, expanding 
+;;"honors" or "regular" into "missing honors" or
+;;"missing regular", respectively.
+
+;;Template:
+#;(define (missing-temp str)
+    (cond [(string=? str ...) ...]
+          [(string=? str ...) ...]))
+
+(define (missing-fix str)
+  (cond [(string=? str "honors") "Missing regular"]
+        [(string=? str "regular") "Missing honors"]))
+
+;;Alphabetize:
+;;Contract: alphabetize : [ListOf ExamGrade] -> [ListOf ExamGrade]
+;;Purpose: alphabetize takes a list of exam grades and alphabetizes them
+;;based on the name of the student in each exam grade.
+
+;;Template:
+#;(define (alpha-temp loeg)
+    (cond [(empty? loeg) empty]
+          [else (cons ...
+                 (alpha-temp (rest loeg)))]))
+
+(define (alphabetize loeg)
+  (cond [(empty? loeg) empty]
+        [else (cons (alpha-first loeg)
+                    (alphabetize
+                     (remove (alpha-first loeg) loeg)))]))
+
+;;Alpha-First:
+;;Contract: alpha-first : [ListOf ExamGrade] -> ExamGrade
+;;Purpose: alpha-first looks through the list of exam grades,
+;;and finds the one whose student name comes "first" alphabetically.
+
+;;Template:
+#;(define (first-temp loeg)
+    (cond [(empty? loeg ...)]
+          [else ...
+           (> (... first loeg)) (... ans) ans]
+          ;;Similar to biggest?
+
+(define (alpha-first loeg)
+  (cond [(empty? (rest loeg)) (first loeg)]
+        [else (local ((define ans (alpha-first (rest loeg)))
+                      (define (alpha eq)
+                        (char->integer
+                         (string-ref 
+                          (examgrade-student eq) 0))))
+                (cond [(> (alpha (first loeg)) (alpha ans)) ans]
+                      [else (first loeg)]))]))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; LEGO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;;------------------CONSTANTS:------------------------------
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(define LEGO_HEIGHT 10)
+
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;;------------------DATA DEFINITIONS:-----------------------
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(define-struct lego (label color width))
+;; A Lego is a (make-lego Number Symbol Number)
+
+#;(define (lego-temp lego)
+    ... (lego-label lego) ...
+    ... (lego-color lego) ...
+    ... (lego-width lego) ...)
+
+
+
+
+(define-struct bigger (lego left right))
+;; A LegoBldg (lego building) is one of: 
+;; - Lego 
+;; - (make-bigger Lego LegoBldg LegoBldg)
+
+#;(define (bigger-temp b)
+    (cond [(lego? b) ... (lego-label b)
+                     ... (lego-color b)
+                     ... (lego-width b)]
+          [else      ... (bigger-lego b)
+                     ... (bigger-left b)
+                     ... (bigger-right b)]))
+
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;;------------------DATA EXAMPLES: -------------------------
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;; Lego
+(define lego1 (make-lego 1 'red    80))
+(define lego2 (make-lego 2 'green  50))
+(define lego3 (make-lego 3 'gray   30))
+(define lego4 (make-lego 4 'orange 50))
+
+;; Bigger
+(define bldg1 (make-bigger (make-lego 4 'purple 80)
+                           (make-bigger (make-lego 2 'blue 60)
+                                        (make-lego 1 'yellow 40) 
+                                        (make-lego 3 'red 40))
+                           (make-bigger (make-lego 6 'orange 60)
+                                        (make-lego 5 'green 40) 
+                                        (make-lego 7 'red 40))))
+
+(define bldg2 (make-bigger (make-lego 4 'purple 80)
+                           (make-bigger (make-lego 2 'blue 60)
+                                        (make-lego 1 'yellow 40) 
+                                        (make-lego 3 'red 40))
+                           (make-lego 6 'orange 60)))
+
+(define bldg3 (make-bigger (make-lego 4 'purple 80)
+                           (make-bigger (make-lego 2 'blue 60)
+                                        (make-lego 1 'yellow 40) 
+                                        (make-bigger (make-lego 3 'red 40)
+                                                     (make-lego 8 'green 70)
+                                                     (make-lego 9 'red 20)))
+                           (make-bigger (make-lego 6 'orange 60)
+                                        (make-lego 5 'green 40) 
+                                        (make-lego 7 'red 40))))
+
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;;------------------FUNCTIONS:------------------------------
+;;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+;;------------------------------------------------
+;;                   Exercise 3
+;;------------------------------------------------
+
+;; count-bricks : LegoBldg -> Number
+;; Finds the number of Legos in a LegoBldg
+(define (count-bricks bldg)
+  (cond [(lego? bldg) 1]
+        [else (+ 1
+                 (count-bricks (bigger-left bldg))
+                 (count-bricks (bigger-right bldg)))]))
+;; Examples/Tests:
+(check-expect (count-bricks bldg1) 7)
+(check-expect (count-bricks bldg2) 5)
+(check-expect (count-bricks bldg3) 9)
+(check-expect (count-bricks lego1) 1)
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 4
+;; ---------------------------------------------
+
+;; how-high : LegoBldg -> Number
+;; Finds the total hight of the building when each lego
+;; is 10 pixels high.
+(define (how-high bldg)
+  (local ((define (max n1 n2)
+            (if (> n1 n2) n1 n2)))
+    (cond [(lego? bldg) LEGO_HEIGHT]
+          [else (+ LEGO_HEIGHT
+                   (max (how-high (bigger-left bldg))
+                        (how-high (bigger-right bldg))))])))
+;; Examples/Tests:
+(check-expect (how-high bldg1) 30)
+(check-expect (how-high bldg2) 30)
+(check-expect (how-high bldg3) 40)
+(check-expect (how-high lego1) 10)
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 5
+;; ---------------------------------------------
+
+;; contains-colored-brick? : LegoBldg Symbol -> Boolean
+;; Is there a brick with the given color?
+(define (contains-colored-brick? bldg color)
+  (or (and (lego? bldg)
+           (symbol=? color
+                     (lego-color bldg)))
+      (and (bigger? bldg)
+           (or (symbol=? color
+                         (lego-color (bigger-lego bldg)))
+               (contains-colored-brick? (bigger-left bldg)
+                                        color)
+               (contains-colored-brick? (bigger-right bldg)
+                                        color)))))
+;; Examples/Tests:
+(check-expect (contains-colored-brick? bldg1 'red) true)
+(check-expect (contains-colored-brick? bldg1 'pink) false)
+(check-expect (contains-colored-brick? lego1 'red) true)
+(check-expect (contains-colored-brick? lego1 'pink) false)
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 6
+;; ---------------------------------------------
+
+;; A MaybeLego is one of: 
+;; - false 
+;; - Lego 
+
+;; color-lego? : Lego Symbol -> MaybeLego
+;; Returns the lego if the color is the same as given,
+;; else false.
+(define (color-lego? lego color)
+  (if (symbol=? (lego-color lego)
+                color)
+      lego
+      false))
+;; Examples/Tests:
+(check-expect (color-lego? lego1 'red)   lego1)
+(check-expect (color-lego? lego1 'green) false)
+
+
+
+;; find-colored-brick? : LegoBldg Symbol -> MaybeLego
+;; Finds the first lego in a building with the given
+;; color, searching from top to bottom and left to right.
+;; Examples:
+(define (find-colored-brick? bldg color)
+  (cond
+    ;; Case for bldg is a (make-lego ...)
+    [(lego? bldg) (color-lego? bldg color)]
+    ;; From here assumed by definition that bldg is a (make-bigger ...)
+    [(symbol=? (lego-color (bigger-lego bldg))
+               color)
+     (bigger-lego bldg)]
+    [else (local ((define left (find-colored-brick? (bigger-left bldg) color)))
+            (if (lego? left)
+                left
+                (find-colored-brick? (bigger-right bldg) color)))]))
+;; Examples/Tests:
+(check-expect (find-colored-brick? bldg1 'red) (make-lego 3 'red 40))
+(check-expect (find-colored-brick? bldg1 'pink) false)
+(check-expect (find-colored-brick? bldg1 'blue) (make-lego 2 'blue 60))
+(check-expect (find-colored-brick? lego1 'red) lego1)
+(check-expect (find-colored-brick? lego1 'green) false)
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 7
+;; ---------------------------------------------
+
+;; lego->image : Lego -> Image
+;; Creates an image of the given lego.
+(define (lego->image lego)
+  (rectangle (lego-width lego)
+             LEGO_HEIGHT
+             'solid
+             (lego-color lego)))
+;; Examples/Tests:
+(check-expect (lego->image lego1) .) ;; assuming height is 10
+(check-expect (lego->image lego2) .)     ;; assuming height is 10
+(check-expect (lego->image lego3) .)       ;; assuming height is 10
+
+
+
+;; lb->image : LegoBldg -> Image
+;; Creates an image of the lego building
+(define (lb->image bldg)
+  (cond [(lego? bldg) (lego->image bldg)]
+        [else (above (lego->image (bigger-lego bldg))
+                     (beside/align "top"
+                                   (lb->image (bigger-left bldg))
+                                   (lb->image (bigger-right bldg))))]))
+;; Examples/Tests:
+(check-expect (lb->image bldg1) .)
+(check-expect (lb->image bldg2) .)
+(check-expect (lb->image bldg3) .)
+(check-expect (lb->image lego1)  .)
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 8
+;; ---------------------------------------------
+
+;; label-merge : 
+(define (label-merge l r)
+  (string->number (string-append (number->string l)
+                                 "."
+                                 (number->string r))))
+;; Examples/Tests:
+(check-expect (label-merge 1 0) 1.0)
+(check-expect (label-merge 1 2) 1.2)
+(check-expect (label-merge 2 2) 2.2)
+(check-expect (label-merge 3 1415) 3.1415)
+
+
+
+;; merge-lego : Lego Lego -> Lego
+;; Makes a new lego with the combined characteristics.
+;; of both legos.
+;; l-label r-label -> l-label.r-label
+;; Color from left (Use in merge-lb requires same color for each.)
+;; width = (+ left right)
+(define (merge-lego bl br)
+  (make-lego (label-merge (lego-label bl)
+                          (lego-label br))
+             (lego-color bl)
+             (+ (lego-width bl)
+                (lego-width br))))
+;; Examples/Tests:
+(check-expect (merge-lego lego1 lego2) (make-lego 1.2 'red 130))
+
+
+
+
+;; merge-lb : LegoBldg LegoBldg -> LegoBldg
+;; Takes two lego buildings and merges them into a new lego building.
+(define (merge-lb bl br)
+  (cond
+    ;; Both buildings are single Lego
+    [(and (lego? bl)
+          (lego? br)
+          (symbol=? (lego-color bl)
+                    (lego-color br)))
+     (merge-lego bl br)]
+    
+    ;; Left Building is a Lego. Right is a (make-bigger ...) and
+    ;; left lego and top right lego match
+    [(and (lego? bl)
+          (bigger? br)
+          (symbol=? (lego-color bl)
+                    (lego-color (bigger-lego br))))
+     (merge-lego bl
+                 (bigger-lego br))]
+    
+    ;; Right Building is a Lego. Left is a Bigger and
+    ;; right lego and top left lego match
+    [(and (lego? br)
+          (bigger? bl)
+          (symbol=? (lego-color br)
+                    (lego-color (bigger-lego bl))))
+     (merge-lego (bigger-lego bl)
+                 br)]
+    
+    ;; Both are (make-bigger ...) and
+    ;; top legos match.
+    [(and (bigger? bl)
+          (bigger? br)
+          (symbol=? (lego-color (bigger-lego bl))
+                    (lego-color (bigger-lego br))))
+     (make-bigger (merge-lego (bigger-lego bl)
+                              (bigger-lego br))
+                  (merge-lb (bigger-left bl)
+                            (bigger-left br))
+                  (merge-lb (bigger-right bl)
+                            (bigger-right br)))]
+    
+    ;; Else no matching
+    [else (error 'merge-lb "Colors don't match.")]))
+
+;; Examples/Tests:
+(check-expect (merge-lb (make-bigger (make-lego 2 'blue 60)
+                                     (make-lego 1 'yellow 40) 
+                                     (make-lego 3 'red 40))
+                        (make-bigger (make-lego 2 'blue 60)
+                                     (make-lego 1 'yellow 40) 
+                                     (make-lego 11 'red 20)))
+              (make-bigger (make-lego 2.2 'blue 120)
+                           (make-lego 1.1 'yellow 80)
+                           (make-lego 3.11 'red 60)))
+
+(check-expect (merge-lb (make-bigger (make-lego 4 'purple 80) 
+                                     (make-bigger (make-lego 2 'blue 60)
+                                                  (make-lego 1 'yellow 40) 
+                                                  (make-lego 3 'red 40))                
+                                     (make-lego 6 'orange 60))
+                        (make-bigger (make-lego 4 'purple 80) 
+                                     (make-lego 2 'blue 60)
+                                     (make-bigger (make-lego 6 'orange 60)
+                                                  (make-lego 5 'green 40) 
+                                                  (make-lego 7 'red 40))))                
+              (make-bigger (make-lego 4.4 'purple 160)
+                           (make-lego 2.2 'blue 120)
+                           (make-lego 6.6 'orange 120)))
+
+(check-error (merge-lb (make-lego 1 'red 30)
+                       (make-lego 1 'green 30))
+             "merge-lb: Colors don't match.")
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORDERLY LEGO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;             
+
+;; An OrdLegoBldg (ordered lego building) is one of: 
+;; - 'none 
+;; - Lego 
+;; - (make-bigger Lego LegoBldg LegoBldg) 
+;; where each lego brick in the building has a unique label and 
+;; where each (make-bigger l lft rgt) has the property that  
+;;  -- the label of l is bigger than all the labels in lft 
+;;  -- the label of l is smaller than all the labels in rgt 
+
+(define obldg1 (make-bigger (make-lego 4 'purple 80)
+                            (make-bigger (make-lego 2 'red 40)
+                                         'none 
+                                         (make-lego 3 'blue 60))
+                            (make-bigger (make-lego 6 'orange 60)
+                                         (make-lego 5 'green 40) 
+                                         'none)))
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 9
+;; ---------------------------------------------
+
+;; ord-lb-contains? : OrdLegoBldg Number -> Boolean
+;; Does the ordered lego building contain a lego with
+;; the given label?
+(define (ord-lb-contains? olb label)
+  (and (not (symbol? olb)) ;; Case if olb is 'none
+       (or (and (lego? olb) ; Case if olb is a Lego
+                (= (lego-label olb)
+                   label))
+           (and (bigger? olb) ;; Case if olb is an OrdlegoBldg
+                (or (= (lego-label (bigger-lego olb)) ;; l has the label?
+                       label)
+                    (and (> (lego-label (bigger-lego olb)) ;; in left?
+                            label)
+                         (ord-lb-contains? (bigger-left olb) label))
+                    (ord-lb-contains? (bigger-right olb) label)))))) ;; right?
+;; Tests/Examples:
+(check-expect (ord-lb-contains? bldg1 1) true) 
+(check-expect (ord-lb-contains? bldg1 2) true)
+(check-expect (ord-lb-contains? bldg1 3) true)
+(check-expect (ord-lb-contains? bldg1 4) true)
+(check-expect (ord-lb-contains? bldg1 6) true)
+(check-expect (ord-lb-contains? bldg1 7) true)
+(check-expect (ord-lb-contains? bldg1 8) false)
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 10
+;; ---------------------------------------------
+
+;; colors-in-order : OrdLegoBldg -> [Listof Symbol]
+;; Returns a list of colors ordered by the labels
+;; of the lego they were taken from (low to high)
+(define (colors-in-order olb)
+  (cond [(symbol? olb) empty]
+        [(lego? olb)  (list (lego-color olb))]
+        [else (append (colors-in-order (bigger-left olb))
+                      (cons (lego-color (bigger-lego olb))
+                            (colors-in-order (bigger-right olb))))]))
+;; Tests/Examples:
+(check-expect (colors-in-order bldg1)
+              '(yellow blue red purple green orange red))
+(check-expect (colors-in-order bldg2)
+              '(yellow blue red purple orange))
+(check-expect (colors-in-order obldg1)
+              '(red blue purple green orange))
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 11
+;; ---------------------------------------------
+
+
+;; HELPER FUNCTION
+;; lego+lego : Lego Lego -> OrdLegoBldg
+;; Combines two lego according to the ordering rules.
+(define (lego+lego l1 l2)
+  (cond [(> (lego-label l1)
+            (lego-label l2))
+         (make-bigger l1 l2 'none)]
+        [(< (lego-label l1)
+            (lego-label l2))
+         (make-bigger l2 l1 'none)]
+        [(= (lego-label l1)
+            (lego-label l2))
+         (error 'lego+lego "Label already in building.")]))
+;; Tests/Examples:
+(check-expect (lego+lego lego1 lego2)
+              (make-bigger lego2 lego1 'none))
+(check-expect (lego+lego lego2 lego1)
+              (make-bigger lego2 lego1 'none))
+(check-error  (lego+lego lego1 lego1)
+              "lego+lego: Label already in building.")
+
+
+
+;; HELPER FUNCTION
+;; grow-simp-olb : OrdLegoBldg Lego -> OrdLegoBldg
+;; Takes a building with a 'none as sub-building on the
+;; right and redistributes the legos to compress it best.
+(define (grow-simp-olb-left simp new)
+  (local ((define middle (bigger-lego simp))
+          (define left   (bigger-left simp))
+          (define right  (bigger-right simp)))
+    (cond [(or (= (lego-label new)
+                  (lego-label middle))
+               (= (lego-label new)
+                  (lego-label left)))
+           (error 'grow-simp-olb-left "Label already in building.")]
+          
+          [(< (lego-label new)
+              (lego-label left))
+           (make-bigger left
+                        new
+                        middle)]
+          
+          [(and (> (lego-label new)
+                   (lego-label left))
+                (< (lego-label new)
+                   (lego-label middle)))
+           (make-bigger new
+                        left
+                        middle)]
+          
+          [else (make-bigger middle
+                             left
+                             new)])))
+;; Tests/Examples:
+(check-expect (grow-simp-olb-left (make-bigger lego3 lego2 'none) lego1)
+              (make-bigger lego2 lego1 lego3))
+(check-expect (grow-simp-olb-left (make-bigger lego3 lego1 'none) lego2)
+              (make-bigger lego2 lego1 lego3))
+(check-expect (grow-simp-olb-left (make-bigger lego2 lego1 'none) lego3)
+              (make-bigger lego2 lego1 lego3))
+(check-error (grow-simp-olb-left (make-bigger lego2 lego1 'none) lego1)
+             "grow-simp-olb-left: Label already in building.")
+
+
+
+;; HELPER FUNCTION
+;; grow-simp-olb : OrdLegoBldg Lego -> OrdLegoBldg
+;; Takes a building with a 'none as sub-building on the
+;; left and redistributes the legos to compress it best.
+(define (grow-simp-olb-right simp new)
+  (local ((define middle (bigger-lego simp))
+          (define left   (bigger-left simp))
+          (define right  (bigger-right simp)))
+    (cond [(or (= (lego-label new)
+                  (lego-label middle))
+               (= (lego-label new)
+                  (lego-label right)))
+           (error 'grow-simp-olb-right "Label already in building.")]
+          
+          [(> (lego-label new)
+              (lego-label right))
+           (make-bigger right
+                        middle
+                        new)]
+          
+          [(and (< (lego-label new)
+                   (lego-label right))
+                (> (lego-label new)
+                   (lego-label middle)))
+           (make-bigger new
+                        middle
+                        right)]
+          
+          [else (make-bigger middle
+                             new
+                             right)])))
+;; Tests/Examples:
+(check-expect (grow-simp-olb-right (make-bigger lego2 'none lego3) lego1)
+              (make-bigger lego2 lego1 lego3))
+(check-expect (grow-simp-olb-right (make-bigger lego1 'none lego3 ) lego2)
+              (make-bigger lego2 lego1 lego3))
+(check-expect (grow-simp-olb-right (make-bigger lego1 'none lego2) lego3)
+              (make-bigger lego2 lego1 lego3))
+(check-error (grow-simp-olb-right (make-bigger lego1 'none lego1) lego1)
+             "grow-simp-olb-right: Label already in building.")
+
+
+
+
+;;HELPER FUNCTION
+;; o-bigger+lego : OrdLegoBldg Lego -> OrdLegoBldg
+;; Adds a single lego to an OrdLegoBldg, which must
+;; be a (make-bigger...)
+(define (o-bigger+lego olb lego)
+  (cond 
+    ;; adds 2+1 correctly to remove 'none from right
+    [(and (lego? (bigger-left olb))
+          (lego? (bigger-lego olb))
+          (symbol? (bigger-right olb)))
+     (grow-simp-olb-left olb lego)]
+    
+    ;; adds 2+1 correctly to remove 'none from left
+    [(and (lego? (bigger-left olb))
+          (lego? (bigger-lego olb))
+          (symbol? (bigger-left olb)))
+     (grow-simp-olb-left olb lego)]
+    
+    ;; lego belongs in left
+    [(> (lego-label (bigger-lego olb))
+        (lego-label lego))
+     (make-bigger (bigger-lego olb)
+                  (grow-ord-lb (bigger-left olb)
+                               lego)
+                  (bigger-right olb))]
+    
+    ;; lego belongs in right
+    [(< (lego-label (bigger-lego olb))
+        (lego-label lego))
+     (make-bigger (bigger-lego olb)
+                  (bigger-left olb)
+                  (grow-ord-lb (bigger-right olb)
+                               lego))]
+    
+    ;; lego label = bigger-lego label
+    [(= (lego-label (bigger-lego olb))
+        (lego-label lego))
+     (error 'o-bigger+lego "Label already in building.")]))
+;; Tests/ Examples:
+(check-expect (o-bigger+lego obldg1 lego1)
+              (make-bigger (make-lego 4 'purple 80)
+                            (make-bigger (make-lego 2 'red 40)
+                                         lego1 
+                                         (make-lego 3 'blue 60))
+                            (make-bigger (make-lego 6 'orange 60)
+                                         (make-lego 5 'green 40) 
+                                         'none)))
+(check-expect (o-bigger+lego obldg1 (make-lego 7 'green 30))
+              (make-bigger (make-lego 4 'purple 80)
+                            (make-bigger (make-lego 2 'red 40)
+                                         'none 
+                                         (make-lego 3 'blue 60))
+                            (make-bigger (make-lego 6 'orange 60)
+                                         (make-lego 5 'green 40) 
+                                         (make-lego 7 'green 30))))
+(check-error (o-bigger+lego bldg1 lego4)
+             "o-bigger+lego: Label already in building.")
+
+
+
+;; grow-ord-lb : OrdLegoBldg Lego -> OrdLegoBldg
+;; Adds the Lego to the building unless, a lego
+;; with the same label is already in the building.
+(define (grow-ord-lb olb lego)
+  (cond [(symbol? olb) lego]
+        [(lego? olb) (lego+lego olb lego)]
+        [(bigger? olb) (o-bigger+lego olb lego)]))
+;; Tests/Examples:
+(check-expect (grow-ord-lb obldg1 lego1)
+              (make-bigger (make-lego 4 'purple 80)
+                            (make-bigger (make-lego 2 'red 40)
+                                         lego1 
+                                         (make-lego 3 'blue 60))
+                            (make-bigger (make-lego 6 'orange 60)
+                                         (make-lego 5 'green 40) 
+                                         'none)))
+(check-expect (grow-ord-lb obldg1 (make-lego 7 'green 30))
+              (make-bigger (make-lego 4 'purple 80)
+                            (make-bigger (make-lego 2 'red 40)
+                                         'none 
+                                         (make-lego 3 'blue 60))
+                            (make-bigger (make-lego 6 'orange 60)
+                                         (make-lego 5 'green 40) 
+                                         (make-lego 7 'green 30))))
+(check-expect (grow-ord-lb lego1 lego2) (make-bigger lego2 lego1 'none))
+(check-expect (grow-ord-lb lego2 lego1) (make-bigger lego2 lego1 'none))
+(check-expect (grow-ord-lb lego1 lego2) (make-bigger lego2 lego1 'none))
+
+
+
+
+
+;; ---------------------------------------------
+;;                   Exercise 12
+;; ---------------------------------------------
+
+;; build-ord-lb : [Listof Lego] -> OrdLegoBldg
+;; Builds an OrdLegoBldg from a [Listof Lego]
+;; following the ordering rules.
+(define (build-ord-lb list)
+  (cond [(empty? list) 'none]
+        [else (grow-ord-lb (build-ord-lb (rest list)) (first list))]))
+;; Tests/Examples:
+(check-expect (build-ord-lb (list (make-lego 1 'red 10)
+                                  (make-lego 2 'green 20)))
+              (make-bigger (make-lego 2 'green 20)
+                           (make-lego 1 'red 10)
+                           'none))
+(check-expect (build-ord-lb empty)
+              'none)
+(check-expect (build-ord-lb (list (make-lego 1 'red 10)
+                                  (make-lego 3 'gray 50)
+                                  (make-lego 2 'green 20)))
+              (make-bigger (make-lego 2 'green 20)
+                           (make-lego 1 'red 10)
+                           (make-lego 3 'gray 50)))
+(check-expect (build-ord-lb (list (make-lego 3 'green 20)
+                                  (make-lego 1 'red 40)
+                                  (make-lego 5 'orange 60)
+                                  (make-lego 4 'blue 80)
+                                  (make-lego 2 'purple 40)))
+              (make-bigger (make-lego 4 'blue 80)
+                           (make-bigger (make-lego 2 'purple 40)
+                                        (make-lego 1 'red 40)
+                                        (make-lego 3 'green 20))
+                           (make-lego 5 'orange 60)))
+(check-error (build-ord-lb (list (make-lego 1 'green 20)
+                                 (make-lego 1 'red 50)))
+             "lego+lego: Label already in building.")
+
+
+
+
+#| X-expressions:
+
+   Xexpr is one of: 
+   -- (cons Symbol (cons LOA Xbody))
+   -- (cons Symbol Xbody)
+
+   Xbody is one of: 
+   -- empty
+   -- (cons String Xbody)
+   -- (cons Xexpr Xbody)
+
+   LOA is one of: 
+   -- empty 
+   -- (cons (list Symbol String) LOA)
+
+   Note: (list Symbol String) is called an Attribute. 
+   Furthermore, (list 'a "some text") is called an a-Attribute 
+   and "some text" is its value. 
+
+	<week>
+	 <assignment>
+	  hello
+	  <syllabus week="2" src="sample2.xml" />
+	  <syllabus week="1" src="sample1.xml">
+	   world
+	  </syllabus>
+	 </assignment>
+	 done
+	</week>
+
+|#
+
+;;EXERCISE 13:
+(define xml-test
+  (list 'week empty
+        (list 'assignment empty
+              "hello"
+              (list 'syllabus (list 
+                               (list 'src "sample2.xml") 
+                               (list 'week "2")))
+              (list 'syllabus (list
+                               (list 'src "sample1.xml")
+                               (list 'week "1")))
+              "world")
+        "done"))
+
+(define xml-short
+  (list 'one empty
+        "two"))
+
+
+;;NOTE: as with above, some functions overlap, and some functions simply
+;;do not work on their own, so testing is done primarily for the 
+;;main and support (significant helper) functions in the following
+;;exercises.
+
+
+;;EXERCISE 14:
+
+;;Contract: list-combiner : list -> list
+;;list-combiner takes a list which contains multiple lists,
+;;and combines them all so that they are all terms of
+;;the same, singular list.
+
+;;Template:
+#;(define (combiner-temp list)
+    (cond [(empty? list) empty]
+          [(list? (first list) ...) ...]
+          [else (cons (first list)
+                      (combiner-temp (rest list)))]))
+(define (list-combiner list)
+  (cond [(empty? list) empty]
+        [(list? (first list))
+         (list-combiner (append (first list) (rest list)))]
+        [else (cons (first list)
+                    (list-combiner (rest list)))]))
+;;Examples/Tests:
+(check-expect (list-combiner xml-test) 
+              (list
+               'week
+               'assignment
+               "hello"
+               'syllabus
+               'src
+               "sample2.xml"
+               'week
+               "2"
+               'syllabus
+               'src
+               "sample1.xml"
+               'week
+               "1"
+               "world"
+               "done"))
+
+
+;;Since multiple files cannot be uploaded, I am testing the helper functoins
+;;used by the main functions, which produces the same result.
+
+;;File-Depth:
+;;Contract: file-depth : Xml-File -> Number
+;;Purpose: file-depth consumes an XML file and returns the depth, or complexity,
+;;of the file as a single number.
+
+;;Template:
+#;(define (file-depth-temp xml-file)
+    (... (read-file xml-file) ...))
+
+
+(define (file-depth xml-file)
+  (xexpr-depth (read-file xml-file)))
+
+;;Xexpr-Depth:
+;;Contract: xexpr-depth : List -> Number
+;;Purpose: xexpr takes a list (or 
+;;technically an x-expression) and finds the depth of it, based on the amount
+;;of "indentations" made within the XML code itself.
+
+;;Template:
+#;(define (depth-temp list)
+    (cond [(empty? list) 0]
+          [... (+ 1 (xexpr-depth (rest list)))]))
+
+(define (xexpr-depth xml)
+  (cond [(empty? xml) 0] 
+        [(empty? (first xml)) (+ 1 (xexpr-depth (rest xml)))]
+        [(list? (first xml)) (+ 
+                              (xexpr-depth (first xml))
+                              (xexpr-depth (rest xml)))]
+        [else (xexpr-depth (rest xml))]))
+
+;;Examples/Tests:
+(check-expect (xexpr-depth xml-test) 2)
+(check-expect (xexpr-depth empty) 0)
+(check-expect (xexpr-depth xml-short) 1)
+
+;;Find-Elements:
+;;Contract: find-elements : Xexpr Symbol -> List
+;;Purpose: Acting as a helper function for xexpr-elements,
+;;find-elements takes an expression and a symbol,
+;;and returns all elements "tagged" with that symbol in the
+;;expression.
+
+;;Template:
+#;(define (elements-temp xml t)
+    (cond [(empty? xml) empty]
+          [... (find-elements (rest xml) t)]
+          [(and (symbol? (first xml))
+                (symbol=? (first xml) t))
+           ... (...) ...]
+          [(list? (first xml))
+           (cons (find-elements (first xml) t)
+                 ...
+                 ...)]))
+
+(define (find-elements xml t)
+  (cond [(empty? xml) empty]
+        [(empty? (first xml)) (find-elements (rest xml) t)]
+        [(and (symbol? (first xml))
+              (symbol=? (first xml) t))
+         (rest xml)]
+        [(list? (first xml))
+         (cons (find-elements (first xml) t)
+               (find-elements (rest xml) t))]
+        [else (find-elements (rest xml) t)]))
+
+;;Xexpr-Elements:
+;;Contract: xexpr-elements : Xexpr Symbol -> List
+;;Purpose: xexpr-elements consumes an x expression and
+;;a symbol, and returns all elements in the expression that
+;;are "tagged" with that particular symbol.
+
+;;Template:
+#;(define (elements-temp xml t)
+    (...(find-elements xml t)))
+
+(define (xexpr-elements xml t)
+  (list-combiner (find-elements xml t)))
+
+;;Examples/Tests:
+(check-expect (xexpr-elements xml-test 'syllabus)
+              (list 'src "sample2.xml" 'week "2" 'src "sample1.xml" 'week "1"))
+(check-expect (xexpr-elements xml-test 'assignment)
+              (list
+               "hello"
+               'syllabus
+               'src
+               "sample2.xml"
+               'week
+               "2"
+               'syllabus
+               'src
+               "sample1.xml"
+               'week
+               "1"
+               "world"))
+(check-expect (xexpr-elements empty 'hello) empty)
+
+
+
+
+;;Xexpr-Find:
+;;Contract: xexpr-find : Xexpr -> List
+;;Purpose: Xexpr-Find consumes an x expression, and produces
+;;a simplified list of all the values of src attributes in
+;;the expression.
+
+;;Template:
+#;(define (xexpr-find-temp xml)
+    (cond [(empty? xml) empty]
+          [(list? (first xml)) ...]
+          [(and (symbol? (first xml))
+                (symbol=? (first xml) 'slr))
+           ...]))
+
+(define (xexpr-find xml)
+  (cond [(empty? xml) empty]
+        [(list? (first xml)) (append (xexpr-find (first xml))
+                                     (xexpr-find (rest xml)))]
+        [(and
+          (symbol? (first xml))
+          (symbol=? (first xml) 'src))
+         (cons (first (rest xml))
+               (xexpr-find (rest xml)))]
+        [else (xexpr-find (rest xml))]))
+
+;;Examples/Tests:
+(check-expect (xexpr-find xml-test) 
+              (list "sample2.xml" "sample1.xml"))
+(check-expect (xexpr-find empty)
+              empty)
+(check-expect (xexpr-find xml-short)
+              empty)
+
+#;(define (xexpr-find xml)
+    (cond [(empty? xml) empty] 
+          [(and
+            (symbol? (first xml))
+            (symbol=? (first xml) 'src))
+           (cons (first (rest xml))
+                 (xexpr-find (rest xml)))]
+          [else (xexpr-find (rest xml))]))
+
+;;Find-Srcs:
+;;Contract: find-srcs : XMLFile -> List
+;;Purpose: find-srcs consumes an XMLFile, and produces a list
+;;of all of the values of src attributes in the file.
+
+;;Template:
+#;(define (srcs-temp xml)
+    (...(read-file xml)))
+
+(define (find-srcs xml)
+  (xexpr-find (read-file xml)))
+
+
+;;Exercise 15:
+
+;;Combining xexpr-find and xexpr-depth:
+
+;;Note: in common, they have:
+
+#; (define (supposed-xexpr xml)
+     (cond
+       [(empty? xml) ...]
+       [(empty? (first xml)) ...]
+       [(list? (first xml)) ...]
+       [else ...]))
+;;Contract: Xexpr Type(symbol) -> Number or List ;;symbol: depth or srcs
+;;Purpose: I am trying to combine the two functions into one sole function.
+
+(define (combined-xexpr xml type)
+  (cond
+    [(empty? xml) (base-return type)]
+    [(and
+      (symbol=? type 'srcs)
+      (list? (first xml)))
+     (append (combined-xexpr (first xml) type)
+             (combined-xexpr (rest xml) type))]
+    [(and
+      (symbol=? type 'depth)
+      (empty? (first xml)))
+     (+ 1 (combined-xexpr (rest xml) type))]
+    [(and
+      (symbol=? type 'depth)
+      (list? (first xml)))
+     (+ (combined-xexpr (first xml) type)
+        (combined-xexpr (rest xml) type))]
+    [(and
+      (symbol=? type 'srcs)
+      (symbol? (first xml))
+      (symbol=? (first xml) 'src))
+     (cons (first (rest xml))
+           (combined-xexpr (rest xml) type))]
+    [else
+     (combined-xexpr (rest xml) type)]))
+
+;;Base-Return:
+;;Contract: base-return : Symbol -> empty or Number
+;;Purpose: Based on which type is being used, base-return returns the
+;;respective base, which can be either 0 or empty.
+
+;;Template:
+#;(define (base-temp type)
+    (cond [(symbol=? ...)]
+          [(symbol=? ...)]))
+
+(define (base-return type)
+  (cond [(symbol=? type 'depth) 0]
+        [(symbol=? type 'srcs) empty]))
+
+;;Examples/Tests:
+(check-expect (combined-xexpr xml-test 'srcs)
+              (list "sample2.xml" "sample1.xml"))
+(check-expect (combined-xexpr xml-test 'depth) 2)
+(check-expect (combined-xexpr xml-short 'srcs)
+              empty)
+(check-expect (combined-xexpr xml-short 'depth) 1)
+
+
+
+;;Exercise 17:
+;;Commented out to avoid definition collision
+
+;;Combined-Xexpr: ;use symbols 'srcs, 'depth, or 'elements (NEED S)
+;;Contract: combined-xexpr : Xexpr Type Symbol -> Number or Xexpr
+;;Purpose: this function combines all thress previous functions into one
+;;single function that is capable of checking for what operation is
+;;being performed.  (For the Symbol t, any symbol can be entered if it
+;;is not needed.)
+
+;;Template: see above in Exercise 15, the same holds true for Exercise 17
+
+#;(define (combined-xexpr xml type t)
+    (cond
+      [(symbol=? type 'elements)
+       (list-combiner 
+        (combined-xexpr xml 'element t))]
+      [(empty? xml) (base-return type)]
+      [(and
+        (symbol=? type 'srcs)
+        (list? (first xml)))
+       (append (combined-xexpr (first xml) type t)
+               (combined-xexpr (rest xml) type t))]
+      [(and
+        (or (symbol=? type 'depth)
+            (symbol=? type 'element))
+        (empty? (first xml)))
+       (empty-first-case type)]
+      [(and
+        (or (symbol=? type 'depth)
+            (symbol=? type 'element))
+        (list? (first xml)))
+       ((list-case type) (combined-xexpr (first xml) type t)
+                         (combined-xexpr (rest xml) type t))]
+      [(and
+        (or (symbol=? type 'srcs)
+            (symbol=? type 'element))
+        (symbol? (first xml))
+        (symbol=? (first xml) (symbol-case type))
+        (cons (first (rest xml))
+              (combined-xexpr (rest xml) type t)))]
+      [else
+       (combined-xexpr (rest xml) type t)]))
+
+#|
+;;Examples/Tests:
+(check-expect (combined-xexpr xml-test 'srcs '0)
+              (list "sample2.xml" "sample1.xml"))
+(check-expect (combined-xexpr xml-test 'depth '0) 2)
+(check-expect (combined-xexpr xml-short 'srcs '0)
+              empty)
+(check-expect (combined-xexpr xml-short 'depth '0) 1)
+(check-expect (combined-xexpr xml-test 'element 'syllabus)
+              (list 'src "sample2.xml" 'week "2" 'src "sample1.xml" 'week "1"))
+(check-expect (combined-xexpr xml-test 'element 'assignment)
+              (list
+               "hello"
+               'syllabus
+               'src
+               "sample2.xml"
+               'week
+               "2"
+               'syllabus
+               'src
+               "sample1.xml"
+               'week
+               "1"
+               "world"))
+(check-expect (combined-xexpr empty 'element 'hello) empty)
+|#
+
+;;Base-Return: (the same for all case functions
+;;Contract: base-return : Symbol -> empty or Number
+;;Purpose: Based on which type is being used, base-return returns the
+;;respective base, which can be either 0 or empty.
+
+;;Template:
+#;(define (base-temp type)
+    (cond [(symbol=? ...)]
+          [(symbol=? ...)]))
+    
+#;(define (base-return type)
+  (cond [(symbol=? type 'depth) 0]
+        [(or
+          (symbol=? type 'srcs)
+          (symbol=? type 'element)) empty]))
+
+;;Handles multiple cases where lists are being checked for
+
+#;(define (list-case type)
+    (cond [(symbol=? type 'depth) +]
+          [(symbol=? type 'element) cons]))
+
+;;Handles multiple cases where symbols are being checked
+;;against one another
+
+#;(define (symbol-case type)
+    (cond [(symbol=? type 'srcs) 'src]
+          [(symbol=? type 'element) t]))
+
+;;Handles cases where the first of Xexpr is empty
+
+#;(define (empty-first-case type)
+    (cond [(symbol=? type 'depth)
+           (+ 1 (combined-xexpr (rest xml) type t))]
+          [(symbol=? type 'element)
+           (combined-xexpr (rest xml) type t)]))

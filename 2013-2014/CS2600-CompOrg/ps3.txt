@@ -1,0 +1,10 @@
+.data
+
+.align 5
+.asciiz "Joe"
+.align 5
+.asciiz "Jenny"
+.align 2
+.word 16
+
+.text

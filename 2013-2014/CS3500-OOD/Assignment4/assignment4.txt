@@ -1,0 +1,19 @@
+
+  Static method
+    binTree     : Comparator<String>    ->  BTree (the constructor)
+
+
+  Dynamic methods (for which the receiver is an BTree):
+    build       : Iterable<String>      ->  void
+    toString    :                       ->  String
+    equals      : Object                ->  boolean
+    hashCode    :                       ->  int
+    iterator    :                       -> Iterator<String>
+
+
+You are required to document your implementation with an abstraction function
+(that should include the two requirement described above),
+as well as with the representation invariant comments for every method in your code.
+
+Additionally, you are required to design the 'repOK'
+methods for your implementation that will be included in your class definitions.

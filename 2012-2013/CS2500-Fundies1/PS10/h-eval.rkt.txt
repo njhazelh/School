@@ -1,0 +1,185 @@
+
+<!-- saved from url=(0059)http://www.ccs.neu.edu/course/csu211/Assignments/h-eval.rkt -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname eval) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ())))
+;; ---------------------------------------------------------
+;; An SEXP (S-expression) is one of: 
+;; -- empty 
+;; -- (cons Atom SEXP)
+;; -- (cons SEXP SEXP)
+;;
+;; An ATOM is one of: 
+;; -- Number
+;; -- Boolean 
+;; -- String
+
+
+;; ---------------------------------------------------------
+;; Syntax -- the grammar of Husky, as Racket sexpressions.
+;; ---------------------------------------------------------
+
+;; A HExp (Husky Expression) is one of:
+;; - Number			      ; &lt;number&gt;
+;; - Var			      ; &lt;var&gt;
+;; - (list 'const SExp)	              ; (CONST &lt;constant-sexpression&gt;)
+;; - (list 'fun (list Var ...) HExp)  ; (FUN (&lt;var&gt; ...) &lt;body&gt;)
+;; - (list 'if HExp HExp HExp) 	      ; (IF &lt;test&gt; &lt;then&gt; &lt;else&gt;)
+;; - (list HExp HExp ...)	      ; (&lt;fun&gt; &lt;arg&gt; &lt;arg&gt; ...)
+;;
+;; A Var is a Symbol.
+
+;-----------------------------------------------------------------
+;; An Env is a [Listof (make-binding Var Value)]
+(define-struct binding (var value))
+;; An environment represents a set of variable/value bindings.
+
+;; A Value is one of:
+;; - SExp
+;; - Procedure
+
+;; A Procedure is one of: 
+;; - (make-closure [Listof Var] HExp Env)
+;; - (make-primop ([Listof Value] -&gt; Value))
+(define-struct closure (params body env))
+(define-struct primop (handler))
+;; Closures are what we get when we evaluate (FUN (&lt;var&gt; ...) &lt;body&gt;) 
+;; terms in some given environment -- we package up the parameters 
+;; (&lt;var&gt; ...), the function's &lt;body&gt; expression, and the current 
+;; environment into a closure.
+;;
+;; Primops represent "built-in" primitive operations that the 
+;; interpreter does directly. Every primop comes with a handler that 
+;; we use to do the primop.
+
+
+;; lookup : Env Var -&gt; Value
+;; Lookup the var's value in the environment
+;; Environments are scanned left to right, so consing a binding 
+;; for variable x onto the front of a list shadows any other 
+;; bindings of x further down in the environment.
+(define (lookup env var)
+  (cond [(empty? env) 
+         (error 'lookup "Var is not bound:" var)]
+        [else (local ((define b (first env)))
+                (cond [(symbol=? (binding-var b) var) 
+                       (binding-value b)]
+                      [else (lookup (rest env) var)]))]))
+
+(define test-env (list (make-binding 'x 5)
+                       (make-binding 'y 7)
+                       (make-binding 'x 0)))
+(check-expect (lookup test-env 'x) 5)
+(check-expect (lookup test-env 'y) 7)
+(check-error (lookup test-env 'z) "lookup: Var is not bound:'z")
+     
+;; keyword=? : Symbol SExp -&gt; Boolean
+;; Is the s-expression the given keyword?
+(define (keyword=? kwd exp)
+  (and (symbol? exp)
+       (symbol=? kwd exp)))
+
+;; Eval &amp; Apply -- the pair of functions that make up the interpreter.
+;------------------------------------------------------------
+;; eval : HExp Env -&gt; Value
+;; Evaluate the Husky expression in the given env
+(define (eval exp env)
+  (cond [(number? exp) exp] 
+        [(symbol? exp) (lookup env exp)]
+        [else (local ((define e1 (first exp)))
+                (cond [(keyword=? 'const e1) (second exp)]
+                      [(keyword=? 'fun e1)
+                       (make-closure (second exp) (third exp) env)]
+                      [(keyword=? 'if e1)
+                       (local ((define test (eval (second exp) env)))
+                         (if test (eval (third exp) env)
+                             (eval (fourth exp) env)))]
+                      [else (app (eval e1 env)
+                                 (map (lambda (a) (eval a env))
+                                      (rest exp)))]))]))
+
+;; app : Value [Listof Value] -&gt; Value
+;; Apply the Husky function to the Husky arguments.
+(define (app f args)
+  (cond [(closure? f) 
+         (eval (closure-body f)
+               (append (map make-binding
+                            (closure-params f) 
+                            args)
+                       (closure-env f)))]
+        [(primop? f) ((primop-handler f) args)]
+        [else (error 'app "Attempting to apply a non-function")]))
+
+;-----------------------------------------------------------------
+;; run: HExp -&gt; Value
+;; Run the Husky expression in the top-level environment
+(define (run e)
+  (eval e top-env))
+
+;; Convert a Racket/ISL/ASL function into a Husky-interpreter primop.
+(define (racket-&gt;husky-primop f)
+  (make-primop (λ (args) (apply f args))))
+
+
+(define top-env
+  (list (make-binding 'plus1  (racket-&gt;husky-primop add1))
+	(make-binding 'minus1 (racket-&gt;husky-primop sub1))
+	(make-binding 'kar    (racket-&gt;husky-primop car))
+	(make-binding 'kdr    (racket-&gt;husky-primop cdr))
+        (make-binding 'lst    (racket-&gt;husky-primop list))
+	(make-binding 'tru    true)
+	(make-binding 'fals   false)
+	(make-binding 'not    (racket-&gt;husky-primop not))
+        (make-binding '&lt;      (racket-&gt;husky-primop &lt;))
+	(make-binding 'plus2  (racket-&gt;husky-primop (λ (n) (+ n 2))))
+	(make-binding '*      (racket-&gt;husky-primop *))
+	(make-binding '=      (racket-&gt;husky-primop =))
+	(make-binding '-      (racket-&gt;husky-primop -))))
+
+
+(check-expect (run '1)         1)
+(check-expect (run '(plus2 5)) 7)
+(check-expect (run '(if (&lt; 0 1) 10 20)) 10)
+(check-expect (run '(if (not tru) 10 20)) 20)
+(check-expect (run '(kar (lst 1 2 3))) 1)
+(check-expect (run '(kdr (lst 1 2 3))) '(2 3))
+(check-expect (run '((fun (x) (minus1 (plus2 x))) 5)) 6)
+(check-expect (run '((fun (f) (f (f 0))) plus2)) 4)
+
+(check-expect (run '((fun (abs) (lst (abs (- 5 7)) 
+                                     (abs (- 7 5))))
+                     (fun (x) (if (&lt; x 0) (- x) x)))) '(2 2))
+
+(check-expect (run '((fun (x) (if (&lt; x 0) (const (x is negative))
+                                  (if (= x 0) (const (x is zero))
+                                      (const (x is positive)))))
+                     (* 3 (- 7 10))))
+              '(x is negative))
+
+;; The hard way to write 120 -- really exercise the interpreter.
+;; Apply the Y combinator to a factorial generator; apply the 
+;; result to 5.
+(check-expect (run '(((fun (f) ((fun (g) (f (fun (x) ((g g) x))))
+				(fun (g) (f (fun (x) ((g g) x))))))
+		      (fun (fact)
+		        (fun (n) (if (= n 0) 1
+				     (* n (fact (- n 1)))))))
+		     5))
+	      120)
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+</pre></body></html>

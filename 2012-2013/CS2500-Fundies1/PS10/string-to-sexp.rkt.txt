@@ -1,0 +1,14 @@
+
+<!-- saved from url=(0067)http://www.ccs.neu.edu/course/csu211/Assignments/string-to-sexp.rkt -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">#lang racket
+(require 2htdp/universe)
+
+(define (string-&gt;sexp s)
+  (with-handlers ([exn:fail:read? (λ (x) #f)])
+    (with-input-from-string s read)))
+  
+(provide/contract [string-&gt;sexp (string? . -&gt; . (or/c false/c sexp?))])
+
+
+
+         </pre></body></html>
