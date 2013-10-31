@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="java.lang.ArrayStoreException"/>
+<fullyQualifiedTypeName name="MyAlgosTests"/>
+<fullyQualifiedTypeName name="tester.Tester"/>
+<fullyQualifiedTypeName name="MyAlgorithms"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="FSetString"/>
+<fullyQualifiedTypeName name="FListInteger"/>
+<fullyQualifiedTypeName name="java.util.Comparator"/>
+<fullyQualifiedTypeName name="BTree.BTreeIter"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="BTree"/>
+<fullyQualifiedTypeName name="java.util.NoSuchElementException"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="rbtree.RBTree.Color"/>
+<fullyQualifiedTypeName name="rbtree.RBTree"/>
+</qualifiedTypeNameHistroy>

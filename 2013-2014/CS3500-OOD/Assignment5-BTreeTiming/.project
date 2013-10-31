@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Assignment5-BTreeTiming</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>src/BTree.java</name>
+			<type>1</type>
+			<location>C:/Users/Nick/Dropbox/school/Y2/Y2S1/CS3500/Assignment5/src/BTree.java</location>
+		</link>
+		<link>
+			<name>src/MyComparators.java</name>
+			<type>1</type>
+			<location>C:/Users/Nick/Dropbox/school/Y2/Y2S1/CS3500/Assignment5/src/MyComparators.java</location>
+		</link>
+	</linkedResources>
+</projectDescription>

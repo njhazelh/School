@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;value&apos; in &apos;rbtree.RBTree.Node&apos; to &apos;val&apos;&#x0D;&#x0A;- Original project: &apos;Assignment6-RBTrees&apos;&#x0D;&#x0A;- Original element: &apos;rbtree.RBTree.Node.value&apos;&#x0D;&#x0A;- Renamed element: &apos;rbtree.RBTree.Node.val&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;value&apos;" flags="589826" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;rbtree{RBTree.java[RBTree[Node^value" name="val" references="true" setter="false" stamp="1383251266296" textual="false" version="1.0"/>
+</session>

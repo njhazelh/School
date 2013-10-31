@@ -1,0 +1,33 @@
+/*
+ * Name: Nick Jones
+ * njhazelh@zimbra.ccs.neu.edu
+ * n/a
+ */
+
+/**
+ * ???
+ * @author Nick
+ * version 0.1 9/11/2013
+ */
+public class FSetString {
+
+    /*
+     *   Public static methods:
+
+    emptySet  :                                 ->  FSetString
+    insert    : FSetString x String             ->  FSetString
+    add       : FSetString x String             ->  FSetString
+    size      : FSetString                      ->  int
+    isEmpty   : FSetString                      ->  boolean
+    contains  : FSetString x String             ->  boolean
+    isSubset  : FSetString x FSetString         ->  boolean
+    absent    : FSetString x String             ->  FSetString
+    union     : FSetString x FSetString         ->  FSetString
+    intersect : FSetString x FSetString         ->  FSetString
+
+  Public dynamic methods (for which the receiver is an FSetString):
+    toString  :                                 ->  String
+    equals    :  Object                         ->  boolean
+    hashCode  :                                 ->  int
+     */
+}

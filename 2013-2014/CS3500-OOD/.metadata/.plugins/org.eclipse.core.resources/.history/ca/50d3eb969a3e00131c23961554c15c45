@@ -1,0 +1,14 @@
+/*
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
+ */
+
+
+public class RBTree {
+    private enum Color {
+        RED, BLACK;
+    }
+    
+    
+}

@@ -1,0 +1,71 @@
+/*
+ * Name: Nick Jones
+ * njhazelh@zimbra.ccs.neu.edu
+ * n/a
+ */
+
+/**
+ * ???
+ * @author Nick
+ * version 0.1 9/11/2013
+ */
+public class FSetString {
+    
+    public static FSetString emptySet() {
+    }
+    
+    public static FSetString insert(FSetString set, String s) {
+        
+    }
+    
+    public static FSetString add(FSetString set, String s)  {
+        
+    }
+    
+    public static int size(FSetString set) {
+        
+    }
+    
+    public static boolean isEmpty(FSetString set) {
+        
+    }
+    
+    public static boolean contains(FSetString set, String s) {
+        
+    }
+    
+    public static boolean isSubset(FSetString set, String s) {
+        
+    }
+    
+    public static FSetString absent(FSetString set, String s) {
+        
+    }
+    
+    public static FSetString union(FSetString set1, FSetString set2) {
+        
+    }
+    
+    public static FSetString intersect(FSetString set1, FSetString set2) {
+        
+    }
+    
+    
+    public String toString() {
+        
+    }
+    
+    public boolean equals(Object obj) {
+        
+    }
+    
+    public int hashCode() {
+        
+    }
+    /*
+  Public dynamic methods (for which the receiver is an FSetString):
+    toString  :                                 ->  String
+    equals    :  Object                         ->  boolean
+    hashCode  :                                 ->  int
+     */
+}
