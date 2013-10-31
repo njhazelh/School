@@ -19,13 +19,36 @@ public class RBTree {
     private IRBTree            tree;
     
     /**
-     * Create an empty RBTree with this 
+     * Factory: Create an empty RBTree.
+     * @param comp The Comparator<String> to use to organize Strings.
+     * @return an empty RBTree.
+     */
+    public static RBTree binTree(Comparator<String> comp) {
+        return new RBTree(comp);
+    }
+    
+    
+    /**
+     * Create an empty RBTree with this
+     * 
      * @param comp
      */
     private RBTree(Comparator<String> comp) {
         this.comp = comp;
         this.tree = RBTree.Leaf.LEAF;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // IMPLEMENTATION TYPES!!!
     
     /**
      * Color represents the color of a IRBTree, which is either Red or Black.
@@ -77,11 +100,6 @@ public class RBTree {
         @Override
         public boolean equals(Object that);
         
-        /**
-         * What is this IRBTree's Color? See: RBTree.Color enum.
-         * 
-         * @return The color it is.
-         */
         public RBTree.Color getColor();
         
         /**
@@ -92,6 +110,10 @@ public class RBTree {
          */
         @Override
         public int hashCode();
+        
+        public boolean isLeaf();
+        
+        public void setColor(RBTree.Color c);
         
         /**
          * How many Strings are in this IRBTree
@@ -121,7 +143,7 @@ public class RBTree {
      * tree.
      * 
      * You cannot add to a Leaf. Instead attempt to add, and catch exception.
-     * This is more efficient, since most cases off IRBTree addtion are not
+     * This is more efficient, since most cases off IRBTree addition are to
      * Nodes not Leaves.
      * 
      * @author Nicholas Jones
@@ -175,7 +197,7 @@ public class RBTree {
          * @return RBTree.Color.BLACK
          */
         @Override
-        public BTree.Color getColor() {
+        public RBTree.Color getColor() {
             return RBTree.Color.BLACK;
         }
         
@@ -188,6 +210,26 @@ public class RBTree {
         @Override
         public int hashCode() {
             return 0;
+        }
+        
+        /**
+         * This is a Leaf.
+         * 
+         * @return true;
+         */
+        @Override
+        public boolean isLeaf() {
+            return true;
+        }
+        
+        /**
+         * Cannot set the color of a Leaf. Leaves are always BLACK.
+         * 
+         * @throws UnsupportedOperationException
+         */
+        @Override
+        public void setColor(Color c) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException("Leaves must be BLACK");
         }
         
         /**
@@ -227,60 +269,104 @@ public class RBTree {
      * @version Oct 30, 2013
      */
     protected class Node implements IRBTree {
+        private IRBTree      left;
+        private IRBTree      right;
+        private String       val;
+        private RBTree.Color color;
         
-        /*
-         * (non-Javadoc)
+        /**
+         * Create a new Node with the given values.
          * 
-         * @see rbtree.RBTree.IRBTree#add(java.lang.String)
+         * @param left The left side of this tree. Strings < this.value
+         * @param value The String at this Node.
+         * @param right The right side of this tree. Strings > this.value.
+         */
+        public Node(IRBTree left, String val, IRBTree right) {
+            this.left = left;
+            this.val = val;
+            this.right = right;
+        }
+        
+        /**
+         * Add the String s to this Node if it is not already present
+         * (comparator returns 0 from some String already in this Node).
+         * 
+         * @param s The String to add.
          */
         @Override
         public void add(String s) {
             // TODO Auto-generated method stub
-            
+            // COMPLICATED!
         }
         
-        /*
-         * (non-Javadoc)
+        /**
+         * Does this Node contain the String s?
          * 
-         * @see rbtree.RBTree.IRBTree#contains(java.lang.String)
+         * @param s The String to look for.
+         * @return true if contained in this Node, else false
          */
         @Override
         public boolean contains(String s) {
-            // TODO Auto-generated method stub
-            return false;
+            return this.val.equals(s)
+                    || (RBTree.this.comp.compare(s, this.val) < 0 && this.left
+                            .contains(s))
+                    || (RBTree.this.comp.compare(s, this.val) > 0 && this.right
+                            .contains(s));
         }
         
-        /*
-         * (non-Javadoc)
+        /**
+         * What color is this Node?
          * 
-         * @see rbtree.RBTree.IRBTree#getColor()
+         * @return The Color of this Node.
          */
         @Override
         public Color getColor() {
-            // TODO Auto-generated method stub
-            return null;
+            return this.color;
         }
         
-        /*
-         * (non-Javadoc)
+        /**
+         * This Node is not a Leaf.
          * 
-         * @see rbtree.RBTree.IRBTree#size()
+         * @return false;
+         */
+        @Override
+        public boolean isLeaf() {
+            return false;
+        }
+        
+        /**
+         * Set the color of this Node to the new Node.
+         * 
+         * @param color The new Color.
+         */
+        @Override
+        public void setColor(Color color) {
+            this.color = color;
+        }
+        
+        /**
+         * How many Strings are contained in this Node?
+         * 
+         * @return a positive number equal to the number of Strings in this
+         *         Node.
          */
         @Override
         public int size() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 1 + this.left.size() + this.right.size();
         }
         
-        /*
-         * (non-Javadoc)
+        /**
+         * Get an ordered ArrayList of the Strings in this Node.
          * 
-         * @see rbtree.RBTree.IRBTree#toArrayList()
+         * @return Get an ArrayList with all the Strings of this Node in order.
          */
         @Override
         public ArrayList<String> toArrayList() {
-            // TODO Auto-generated method stub
-            return null;
+            ArrayList<String> temp = this.left.toArrayList();
+            temp.add(this.val);
+            temp.addAll(this.right.toArrayList());
+            
+            return temp;
         }
         
     }
