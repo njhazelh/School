@@ -96,17 +96,20 @@ class Node implements IRBTree {
      */
     protected void rotateRight() {
         Node gp = this.parent;
-        Node oldParent = this;
-        IRBTree oldRight = ((Node)(this.left)).right;
+        Node oldChild = (Node)(this.left);
+        IRBTree oldRight = oldChild.right;
         
-        this.left.right = oldParent;
+        oldChild.right = oldParent;
         this.left = oldRight;
         
-        if (gp instanceof Node) {
-            
+        if (gp instanceof Node) { // NOT ROOT
+            gp.right = oldChild;
         }
         else { // ROOT NODE (NEED TO STEAL REFERENCE)
-            
+            IRBTree            left;
+            IRBTree            right;
+            String             val;
+            Color              color;
         }
     }
     
@@ -121,11 +124,19 @@ class Node implements IRBTree {
         oldChild.left = this;
         this.right = oldLeft;
         
-        if (gp instanceof Node) {
+        if (gp instanceof Node) { // NOT ROOT
             gp.left = oldChild;
         }
         else { // ROOT NODE (NEED TO STEAL REFERENCE)
-            this.
+            IRBTree topLeft = this.left;
+            IRBTree topRight = this.right;
+            String  topVal = this.val;
+            Color   topColor = this.color;
+            this.left = oldChild.left;
+            this.right = oldChild.right;
+            this.val = oldChild.val;
+            this.color = oldChild.color;
+            oldChild.
         }
     }
     

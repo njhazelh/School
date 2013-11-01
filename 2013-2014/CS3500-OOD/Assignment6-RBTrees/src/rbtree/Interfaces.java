@@ -16,7 +16,7 @@ interface IBTree extends Iterable<String> {
      * 
      * @param s String to add
      */
-    public void add(String s);
+    public IBTree add(String s);
     
     /**
      * Does this RBTree contain s?
