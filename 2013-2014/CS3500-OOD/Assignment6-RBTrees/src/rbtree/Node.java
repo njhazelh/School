@@ -92,16 +92,41 @@ class Node implements IRBTree {
     }
     
     /**
-     * 
+     * MUST HAVE LEFT CHILD NODE
      */
     protected void rotateRight() {
-        Node oldParent = ((Node)this.parent.parent.right);
-        IRBTree oldRight = this.right;
-        this.parent.parent.right = this;
-        this.parent.left = oldRight;
-        this.right = oldParent;
-        this.parent.parent = this;
-        this.parent = oldParent.parent;
+        Node gp = this.parent;
+        Node oldParent = this;
+        IRBTree oldRight = ((Node)(this.left)).right;
+        
+        this.left.right = oldParent;
+        this.left = oldRight;
+        
+        if (gp instanceof Node) {
+            
+        }
+        else { // ROOT NODE (NEED TO STEAL REFERENCE)
+            
+        }
+    }
+    
+    /**
+     * MUST HAVE RIGHT CHILD NODE
+     */
+    protected Node rotateLeft() {
+        Node gp = this.parent;
+        Node oldChild = (Node)(this.right);
+        IRBTree oldLeft = oldChild.left;
+        
+        oldChild.left = this;
+        this.right = oldLeft;
+        
+        if (gp instanceof Node) {
+            gp.left = oldChild;
+        }
+        else { // ROOT NODE (NEED TO STEAL REFERENCE)
+            this.
+        }
     }
     
     /**
@@ -124,20 +149,20 @@ class Node implements IRBTree {
         } // HAS PARENT and PARENT COLOR IS RED and DOES NOT HAVE RED UNCLE
         else if (this.equals(this.parent.right) &&
                 this.parent.equals(this.parent.parent.left)) {
-            this.rotateLeft();
+            this.parent.rotateLeft();
         } // " and NO GRANDPARENT or NOT RIGHT OF PARENT or PARENT NOT LEFT OF GRANDPARENT
         else if (this.parent.left.equals(this) &&
                 this.parent.equals(this.parent.parent.right)) {
-            this.rotateRight();
+            this.parent.rotateRight();
         }
         else {
             this.parent.setColor(Color.BLACK);
             this.parent.parent.setColor(Color.RED);
             if (this.equals(this.parent.left)){
-                this.parent.rotateRight();
+                this.parent.parent.rotateRight();
             }
             else {
-                this.parent.rotateLeft();
+                this.parent.parent.rotateLeft();
             }
         }
     }
@@ -224,17 +249,7 @@ class Node implements IRBTree {
         return this.toArrayList().iterator();
     }
     
-    /**
-     * MUST HAVE GRANDPARENT AND THIS MUST BE ON THE LEFT OF THE PARENT
-     */
-    protected void rotateLeft() {
-        Node gp = this.parent.parent;
-        Node oldParent = (Node)(gp.left);
-        IRBTree oldLeft = this.left;
-        gp.left = this;
-        this.left = oldParent;
-        oldParent.right = oldLeft;
-    }
+
     
     /**
      * Set the color of this Node to the new Node.
