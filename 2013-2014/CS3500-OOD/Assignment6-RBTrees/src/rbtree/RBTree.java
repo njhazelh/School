@@ -43,6 +43,7 @@ public class RBTree implements Iterable<String> {
     public void add(String s) {
         try { // ASSUME ADDING TO NODE
             this.tree.add(s);
+            this.tree = ((Node)this.tree).balance();
         }
         catch (UnsupportedOperationException e) { // ADD TO LEAF
             this.tree = new Node(Color.BLACK, this.comp, this.tree, s, this.tree);
