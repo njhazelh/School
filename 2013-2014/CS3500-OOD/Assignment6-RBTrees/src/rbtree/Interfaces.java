@@ -1,38 +1,10 @@
-/**
- * 
+/*
+ * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
  */
+
 package rbtree;
 
 import java.util.ArrayList;
-
-/**
- * This is a union of the two interfaces, Coloured and IBTree.
- * 
- * @author Nicholas Jones
- * @version Oct 31, 2013
- */
-interface IRBTree extends IBTree, Interfaces {}
-
-/**
- * Coloured because England!
- * 
- * @author Nicholas Jones
- * @version Oct 31, 2013
- */
-interface Interfaces {
-    /**
-     * 
-     * @return
-     */
-    public Color getColor();
-    
-    
-    /**
-     * 
-     * @param c
-     */
-    public void setColor(Color c);
-}
 
 /**
  * @author Nicholas Jones
@@ -101,3 +73,31 @@ interface IBTree extends Iterable<String> {
     @Override
     public abstract String toString();
 }
+
+/**
+ * Coloured because England!
+ * 
+ * @author Nicholas Jones
+ * @version Oct 31, 2013
+ */
+interface Interfaces {
+    /**
+     * 
+     * @return
+     */
+    public Color getColor();
+    
+    /**
+     * 
+     * @param c
+     */
+    public void setColor(Color c);
+}
+
+/**
+ * This is a union of the two interfaces, Coloured and IBTree.
+ * 
+ * @author Nicholas Jones
+ * @version Oct 31, 2013
+ */
+interface IRBTree extends IBTree, Interfaces {}

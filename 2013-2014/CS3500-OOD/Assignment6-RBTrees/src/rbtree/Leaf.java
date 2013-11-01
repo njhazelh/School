@@ -1,10 +1,10 @@
-/**
- * 
+/*
+ * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
  */
+
 package rbtree;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -18,15 +18,14 @@ import java.util.Iterator;
  * @version Oct 30, 2013
  */
 class Leaf implements IRBTree {
-    Comparator<String> comp;
+    
+    public static final Leaf LEAF = new Leaf();
     
     /**
      * Force the constructor to be private. Only method of access is from
      * Leaf.LEAF, since Leaf is a singleton object.
      */
-    public Leaf(Comparator<String> comp) {
-        this.comp = comp;
-    }
+    private Leaf() {}
     
     /**
      * Cannot add to a Leaf. Instead swap with Node on higher level.
@@ -90,6 +89,15 @@ class Leaf implements IRBTree {
     }
     
     /**
+     * Get an iterator that has nothing to iterate through.
+     * @return An iterator for this RBTree
+     */
+    @Override
+    public Iterator<String> iterator() {
+        return this.toArrayList().iterator();
+    }
+    
+    /**
      * Cannot set the color of a Leaf. Leaves are always BLACK.
      * 
      * @throws UnsupportedOperationException
@@ -127,14 +135,5 @@ class Leaf implements IRBTree {
     @Override
     public String toString() {
         return "";
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
-    @Override
-    public Iterator<String> iterator() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

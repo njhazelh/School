@@ -32,7 +32,7 @@ public class RBTree implements Iterable<String> {
     
     private RBTree(Comparator<String> comp) {
         this.comp = comp;
-        this.tree = new Leaf(comp);
+        this.tree = Leaf.LEAF;
     }
     
     /**
@@ -40,12 +40,12 @@ public class RBTree implements Iterable<String> {
      * 
      * @param s String to add
      */
-    protected void add(String s) {
-        try {
+    public void add(String s) {
+        try { // ASSUME ADDING TO NODE
             this.tree.add(s);
         }
-        catch (UnsupportedOperationException e) {
-            this.tree = new Node(this.comp, this.tree, s, this.tree);
+        catch (UnsupportedOperationException e) { // ADD TO LEAF
+            this.tree = new Node(Color.BLACK, this.comp, this.tree, s, this.tree);
         }
     }
     
@@ -81,15 +81,14 @@ public class RBTree implements Iterable<String> {
         return this.tree.hashCode();
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Iterable#iterator()
+    /**
+     * Get an iterator that iterates from the lowest values to the highest values
+     * (according to the comparator.)
+     * @return An iterator for this RBTree
      */
     @Override
     public Iterator<String> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.tree.iterator();
     }
     
     /**

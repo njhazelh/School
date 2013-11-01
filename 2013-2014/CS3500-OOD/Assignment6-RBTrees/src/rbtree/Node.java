@@ -1,6 +1,7 @@
-/**
- * 
+/*
+ * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
  */
+
 package rbtree;
 
 import java.util.ArrayList;
@@ -13,35 +14,132 @@ import java.util.Iterator;
  */
 class Node implements IRBTree {
     private Comparator<String> comp;
-    private IRBTree             left;
-    private IRBTree             right;
+    private IRBTree            left;
+    private IRBTree            right;
     private String             val;
     private Color              color;
+    private Node               parent;
     
     /**
      * Create a new Node with the given values.
      * 
+     * @param color The color of this Node
+     * @param comp The comparator of this Node.
      * @param left The left side of this tree. Strings < this.value
      * @param value The String at this Node.
      * @param right The right side of this tree. Strings > this.value.
      */
-    public Node(Comparator<String> comp, IRBTree left, String val, IRBTree right) {
-        this.comp  = comp;
-        this.left  = left;
-        this.val   = val;
+    public Node(Color color, Comparator<String> comp, IRBTree left, String val,
+            IRBTree right) {
+        this.color = color;
+        this.comp = comp;
+        this.left = left;
+        this.val = val;
+        this.right = right;
+    }
+    
+    /**
+     * Create a new Node with the given values.
+     * 
+     * @param color The color of this Node
+     * @param comp The comparator of this Node.
+     * @param parent The parent of this Node.
+     * @param left The left side of this tree. Strings < this.value
+     * @param value The String at this Node.
+     * @param right The right side of this tree. Strings > this.value.
+     */
+    public Node(Color color, Comparator<String> comp, Node parent,
+            IRBTree left, String val, IRBTree right) {
+        this.color = color;
+        this.comp = comp;
+        this.parent = parent;
+        this.left = left;
+        this.val = val;
         this.right = right;
     }
     
     /**
      * Add the String s to this Node if it is not already present (comparator
-     * returns 0 from some String already in this Node).
+     * returns 0 for some String already in this Node).
      * 
      * @param s The String to add.
      */
     @Override
     public void add(String s) {
-        // TODO Auto-generated method stub
-        // COMPLICATED!
+        if (this.comp.compare(s, this.val) < 0) { // ADD TO LEFT
+            try { // ASSUME ADDING TO NODE
+                this.left.add(s);
+            }
+            catch (UnsupportedOperationException e) { // ADD TO LEAF
+                this.left =
+                        new Node(Color.RED, this.comp, this.left, s, this.left);
+            }
+            
+            this.balance();
+        }
+        else if (this.comp.compare(s, this.val) > 0) { // ADD TO RIGHT
+            try { // ASSUME ADDING TO NODE
+                this.right.add(s);
+            }
+            catch (UnsupportedOperationException e) { // ADD TO LEAF
+                this.right =
+                        new Node(Color.RED, this.comp, this.right, s,
+                            this.right);
+            }
+            
+            this.balance();
+        }
+    }
+    
+    /**
+     * 
+     */
+    protected void rotateRight() {
+        Node oldParent = ((Node)this.parent.parent.right);
+        IRBTree oldRight = this.right;
+        this.parent.parent.right = this;
+        this.parent.left = oldRight;
+        this.right = oldParent;
+        this.parent.parent = this;
+        this.parent = oldParent.parent;
+    }
+    
+    /**
+     * WHAT THE HELL DOES THIS DO????
+     */
+    protected void balance() {
+        IRBTree uncle;
+        
+        if (this.parent == null) { // ROOT NODE
+            this.color = Color.BLACK;
+        } // HAS PARENT
+        else if (this.parent.getColor() == Color.BLACK) { // BALANCED
+            return;
+        } // HAS PARENT and PARENT COLOR IS RED => HAS GRANDPARENT
+        else if (this.getUncle().getColor() == Color.RED) {
+            this.parent.setColor(Color.BLACK);
+            uncle.setColor(Color.BLACK);
+            this.parent.parent.setColor(Color.RED);
+            this.parent.parent.balance();
+        } // HAS PARENT and PARENT COLOR IS RED and DOES NOT HAVE RED UNCLE
+        else if (this.equals(this.parent.right) &&
+                this.parent.equals(this.parent.parent.left)) {
+            this.rotateLeft();
+        } // " and NO GRANDPARENT or NOT RIGHT OF PARENT or PARENT NOT LEFT OF GRANDPARENT
+        else if (this.parent.left.equals(this) &&
+                this.parent.equals(this.parent.parent.right)) {
+            this.rotateRight();
+        }
+        else {
+            this.parent.setColor(Color.BLACK);
+            this.parent.parent.setColor(Color.RED);
+            if (this.equals(this.parent.left)){
+                this.parent.rotateRight();
+            }
+            else {
+                this.parent.rotateLeft();
+            }
+        }
     }
     
     /**
@@ -52,22 +150,21 @@ class Node implements IRBTree {
      */
     @Override
     public boolean contains(String s) {
-        return this.val.equals(s)
-                || (this.comp.compare(s, this.val) < 0 && this.left
-                        .contains(s))
-                || (this.comp.compare(s, this.val) > 0 && this.right
-                        .contains(s));
+        return this.val.equals(s) ||
+                (this.comp.compare(s, this.val) < 0 && this.left.contains(s)) ||
+                (this.comp.compare(s, this.val) > 0 && this.right.contains(s));
     }
     
-    /*
-     * (non-Javadoc)
+    /**
+     * Is that an instance of Node with the same comparator and Strings?
      * 
-     * @see rbtree.RBTree#equals(java.lang.Object)
+     * @return true if Node and same Strings, else false.
      */
     @Override
     public boolean equals(Object that) {
-        // TODO Auto-generated method stub
-        return false;
+        return that instanceof Node &&
+                ((Node) that).comp.equals(this.comp) &&
+                ((Node) that).toArrayList().equals(this.toArrayList());
     }
     
     /**
@@ -80,15 +177,30 @@ class Node implements IRBTree {
         return this.color;
     }
     
-    /*
-     * (non-Javadoc)
+    /**
+     * This must have a grandparent for this to work.
      * 
-     * @see rbtree.RBTree#hashCode()
+     * @return
+     */
+    protected IRBTree getUncle() {
+        Node gp = this.parent.parent; // GRANDPARENT
+
+        if (this.parent.equals(gp.left)) {
+            return gp.right;
+        }
+        else {
+            return gp.left;
+        }
+    }
+    
+    /**
+     * a.equals(b) => a.hashCode == b.hashCode()
+     * 
+     * @return An int such that the hashCode/equals agreement hold true.
      */
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.size();
     }
     
     /**
@@ -99,6 +211,29 @@ class Node implements IRBTree {
     @Override
     public boolean isLeaf() {
         return false;
+    }
+    
+    /**
+     * Get an iterator that iterates from the lowest values to the highest
+     * values (according to the comparator.)
+     * 
+     * @return An iterator for this RBTree
+     */
+    @Override
+    public Iterator<String> iterator() {
+        return this.toArrayList().iterator();
+    }
+    
+    /**
+     * MUST HAVE GRANDPARENT AND THIS MUST BE ON THE LEFT OF THE PARENT
+     */
+    protected void rotateLeft() {
+        Node gp = this.parent.parent;
+        Node oldParent = (Node)(gp.left);
+        IRBTree oldLeft = this.left;
+        gp.left = this;
+        this.left = oldParent;
+        oldParent.right = oldLeft;
     }
     
     /**
@@ -135,24 +270,21 @@ class Node implements IRBTree {
         return temp;
     }
     
-    /*
-     * (non-Javadoc)
+    /**
+     * Convert this Node into a String with the Strings contained listed in
+     * order of appearance from left to right.
      * 
-     * @see rbtree.RBTree#toString()
+     * @return A String representing this Node as Described.
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
-    @Override
-    public Iterator<String> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        String ret = "";
+        
+        for (String s : this.toArrayList()) {
+            ret += s + ", ";
+        }
+        
+        return ret.substring(0, ret.length() - 2);
     }
     
 }

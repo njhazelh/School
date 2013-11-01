@@ -1,5 +1,5 @@
-/**
- * 
+/*
+ * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
  */
 package rbtree;
 
