@@ -1,0 +1,119 @@
+/*
+ * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ */
+
+package rbtree;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+
+/**
+ * RBTree is a mutable representation of Red Black Trees, a form of binary
+ * search trees with good worst case efficiency.
+ * 
+ * @author Nicholas Jones
+ * @version Oct 30, 2013
+ */
+public abstract class RBTree {
+    private RBTree tree;
+    private Comparator<String> comp;
+    
+    
+    private RBTree(Comparator<String> comp) {
+        this.tree = new Leaf(comp);
+        this.comp = comp;
+    }
+    
+    /**
+     * Factory: Create an empty RBTree.
+     * 
+     * @param comp The Comparator<String> to use to organize Strings.
+     * @return an empty RBTree.
+     */
+    public static RBTree binTree(Comparator<String> comp) {
+        return new RBTree(comp);
+    }
+    
+    /**
+     * Try to add a String to the RBTree.
+     * 
+     * @param s String to add
+     */
+    protected void add(String s) {
+        try {
+            this.tree.add(s);
+        }
+        catch (UnsupportedOperationException e) {
+            this.tree = new RootNode(this.comp, this.tree, this.tree);
+        }
+    }
+    
+    /**
+     * Does this RBTree contain s?
+     * 
+     * @param s The String to look for?
+     * @return true if present.
+     */
+    public abstract boolean contains(String s);
+    
+    /**
+     * Is that a RBTree with the same Strings and Comparator as that?
+     * 
+     * @param that The Object to compare this to.
+     * @return true if equal.
+     */
+    @Override
+    public abstract boolean equals(Object that);
+    
+    /**
+     * Get the color of this RBTree.
+     * 
+     * @return Red or Black.
+     */
+    public abstract Color getColor();
+    
+    /**
+     * Get an int such that the hashCode/equals relationship holds true.
+     * 
+     * @return an int such that if two objects are equal, they have the same
+     *         hashCode.
+     */
+    @Override
+    public abstract int hashCode();
+    
+    /**
+     * Is this a Leaf?
+     * 
+     * @return true if it is a Leaf.
+     */
+    public abstract boolean isLeaf();
+    
+    /**
+     * Change the color of this RBTree.
+     * 
+     * @param c The new Color(RED|BLACK)
+     */
+    public abstract void setColor(Color c);
+    
+    /**
+     * How many Strings are in this RBTree
+     * 
+     * @return # of Strings in RBTree
+     */
+    public abstract int size();
+    
+    /**
+     * Make an array of all this Strings of this RBTree in order
+     * 
+     * @return an ordered ArrayList<String>
+     */
+    public abstract ArrayList<String> toArrayList();
+    
+    /**
+     * Get a string representing this RBTree
+     * 
+     * @return "s1, s2, s3, ..."
+     */
+    @Override
+    public abstract String toString();
+}

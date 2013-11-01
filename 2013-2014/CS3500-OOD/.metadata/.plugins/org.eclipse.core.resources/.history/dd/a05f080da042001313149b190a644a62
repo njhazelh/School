@@ -1,0 +1,25 @@
+/**
+ * 
+ */
+package rbtree;
+
+/**
+ * Coloured because England!
+ * 
+ * @author Nicholas Jones
+ * @version Oct 31, 2013
+ */
+public interface Coloured {
+    /**
+     * 
+     * @return
+     */
+    public Color getColor();
+    
+    
+    /**
+     * 
+     * @param c
+     */
+    public void setColor(Color c);
+}
