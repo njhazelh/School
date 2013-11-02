@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename local variable &apos;it&apos; in &apos;BTree.build(...)&apos; to &apos;iter&apos;&#x0D;&#x0A;- Original project: &apos;Assignment4&apos;&#x0D;&#x0A;- Original element: &apos;BTree.build(Iterable&lt;String&gt;, Integer).it&apos;&#x0D;&#x0A;- Renamed element: &apos;it&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;it&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;{BTree.java[BTree~build~QIterable\&lt;QString;&gt;;~QInteger;@it!6140!6175!6157!6158!QIterator\&lt;QString;&gt;;!0!false" name="iter" references="true" stamp="1381971412711" version="1.0"/>
-</session>

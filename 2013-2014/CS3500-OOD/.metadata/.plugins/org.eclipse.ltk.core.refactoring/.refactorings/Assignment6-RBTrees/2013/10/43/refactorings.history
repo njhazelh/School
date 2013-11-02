@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename compilation unit &apos;RBTree.java&apos; to &apos;BTree.java&apos;&#x0D;&#x0A;- Original project: &apos;Assignment6-RBTrees&apos;&#x0D;&#x0A;- Original element: &apos;RBTree.java&apos;&#x0D;&#x0A;- Renamed element: &apos;BTree.java&apos;" description="Rename compilation unit &apos;RBTree.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;{RBTree.java" name="BTree.java" references="false" stamp="1382831942962" version="1.0"/>
-</session>
