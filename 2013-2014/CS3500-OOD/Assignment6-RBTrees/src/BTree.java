@@ -3,7 +3,9 @@
  */
 
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import rbtree.RBTree;
 
@@ -21,6 +23,7 @@ import rbtree.RBTree;
 public class BTree implements Iterable<String> {
     private Comparator<String> comp;
     private RBTree             tree;
+    private int                active = 0;
     
     /**
      * This is a static factory method that produces in empty instance of a
@@ -55,10 +58,14 @@ public class BTree implements Iterable<String> {
      * @param in the given <code>Iterable</code> collection
      */
     public void build(Iterable<String> in) {
-        Iterator<String> iter = in.iterator();
-        
-        while (iter.hasNext()) {
-            this.tree.add(iter.next());
+        if (this.active == 0) {
+            for (String s : in) {
+                this.tree.add(s);
+            }
+        }
+        else {
+            throw new ConcurrentModificationException(this.active
+                    + " iterators running");
         }
     }
     
@@ -78,12 +85,16 @@ public class BTree implements Iterable<String> {
         if (numStrings < 0) {
             this.build(in);
         }
-        else {
+        else if (this.active == 0) {
             Iterator<String> iter = in.iterator();
             
-            for (int i = 1; i < numStrings && iter.hasNext(); i++) {
+            for (int i = 0; i < numStrings && iter.hasNext(); i++) {
                 this.tree.add(iter.next());
             }
+        }
+        else {
+            throw new ConcurrentModificationException(this.active
+                    + " iterators running");
         }
     }
     
@@ -133,7 +144,7 @@ public class BTree implements Iterable<String> {
      */
     @Override
     public Iterator<String> iterator() {
-        return this.tree.iterator();
+        return new BTreeIter();
     }
     
     /**
@@ -141,11 +152,14 @@ public class BTree implements Iterable<String> {
      * 
      * @return Is the representation of this BTree valid?
      */
-    public boolean repOk() {
+    public boolean repOK() {
         for (String s : this) {
-            this.contains(s);
+            if (!this.contains(s)) {
+                return false;
+            }
         }
-        return true;
+        
+        return this.tree.repOK();
     }
     
     /**
@@ -169,5 +183,93 @@ public class BTree implements Iterable<String> {
     @Override
     public String toString() {
         return this.tree.toString();
+    }
+    
+    /**
+     * BTreeIter is an Iterator that moves through the BTree in the order that
+     * the Strings were placed by the Comparator of the BTree they point to.
+     * 
+     * @author Nick Jones
+     * @version 2.0 - 10/17/2013
+     */
+    protected class BTreeIter implements Iterator<String> {
+        private boolean          isDone;
+        private Iterator<String> iter;
+        
+        /**
+         * CONSTRUCTOR
+         * 
+         */
+        public BTreeIter() {
+            this.iter = BTree.this.tree.toArrayList().iterator();
+            if (this.iter.hasNext()) {
+                BTree.this.active++;
+                this.isDone = false;
+            }
+            else {
+                this.isDone = true;
+            }
+        }
+        
+        /**
+         * Make sure that this Iterator is cleaned up before it is trashed, so
+         * that the BTree can add more Strings.
+         */
+        @Override
+        protected void finalize() throws Throwable {
+            this.finish();
+            super.finalize();
+        }
+        
+        /**
+         * Free up the BTree this Iterator points to, so that new Strings can be
+         * added to it.
+         */
+        public void finish() {
+            if (!this.isDone) {
+                this.isDone = true;
+                BTree.this.active--;
+            }
+        }
+        
+        /**
+         * Does this Iterator have another String?
+         * 
+         * @return true if there is another String, else false.
+         */
+        @Override
+        public boolean hasNext() {
+            return this.iter.hasNext();
+        }
+        
+        /**
+         * Get the next String in the iteration.
+         * 
+         * @return The next String in the iteration.
+         */
+        @Override
+        public String next() {
+            if (this.iter.hasNext()) {
+                String ret = this.iter.next();
+                if (!this.hasNext()) {
+                    this.finish();
+                }
+                return ret;
+            }
+            else {
+                throw new NoSuchElementException("next: "
+                        + BTree.this.tree.toString());
+            }
+        }
+        
+        /**
+         * Unsupported.
+         * 
+         * @throws UnsupportedOperationException
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
     }
 }

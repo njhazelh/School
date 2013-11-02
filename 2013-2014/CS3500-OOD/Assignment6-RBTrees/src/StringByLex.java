@@ -9,6 +9,14 @@ import java.util.Comparator;
 public class StringByLex implements Comparator<String> {
     
     /**
+     * repOk
+     * @return is this rep ok?
+     */
+    public boolean repOK() {
+        return true;
+    }
+    
+    /**
      * @param s1 String 1
      * @param s2 String 2
      * @return s1.compareTo(s2)

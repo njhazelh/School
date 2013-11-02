@@ -20,14 +20,6 @@ public class RBTree implements Iterable<String> {
     private Comparator<String> comp;
     
     /**
-     * repOk
-     * @return Is the representation for this RBTree valid?
-     */
-    public boolean repOk() {
-        return this.tree.getColor() == Color.BLACK;
-    }
-    
-    /**
      * Factory: Create an empty RBTree that uses the given Comparator to
      * organize Strings.
      * 
@@ -39,8 +31,8 @@ public class RBTree implements Iterable<String> {
     }
     
     /**
-     * This is the private RBTree Constructor.
-     * A factory interface is provided from creating instances of RBTree.
+     * This is the private RBTree Constructor. A factory interface is provided
+     * from creating instances of RBTree.
      * 
      * @param comp The comparator this tree will use to organize Strings.
      */
@@ -57,7 +49,7 @@ public class RBTree implements Iterable<String> {
     public void add(String s) {
         try { // ASSUME ADDING TO NODE
             this.tree.add(s);
-            this.tree = ((Node)this.tree).getRoot();
+            this.tree = ((Node) this.tree).getRoot();
         }
         catch (UnsupportedOperationException e) { // SWAP NODE WITH LEAF
             this.tree =
@@ -106,6 +98,15 @@ public class RBTree implements Iterable<String> {
     @Override
     public Iterator<String> iterator() {
         return this.tree.iterator();
+    }
+    
+    /**
+     * repOk
+     * 
+     * @return Is the representation for this RBTree valid?
+     */
+    public boolean repOK() {
+        return this.tree.getColor() == Color.BLACK;
     }
     
     /**

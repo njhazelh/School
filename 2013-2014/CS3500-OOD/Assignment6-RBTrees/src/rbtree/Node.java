@@ -39,7 +39,7 @@ class Node implements IRBTree {
     }
     
     /**
-     * s Create a new Node with the given values.
+     * Create a new Node with the given values.
      * 
      * @param color The color of this Node
      * @param comp The comparator of this Node.
@@ -66,7 +66,9 @@ class Node implements IRBTree {
      */
     @Override
     public void add(String s) {
-        if (this.comp.compare(s, this.val) < 0) { // ADD TO LEFT
+        int compResult = this.comp.compare(s, this.val);
+        
+        if (compResult < 0) { // ADD TO LEFT
             try { // ASSUME ADDING TO NODE
                 this.left.add(s);
             }
@@ -77,7 +79,7 @@ class Node implements IRBTree {
                 ((Node) this.left).balance();
             }
         }
-        else if (this.comp.compare(s, this.val) > 0) { // ADD TO RIGHT
+        else if (compResult > 0) { // ADD TO RIGHT
             try { // ASSUME ADDING TO NODE
                 this.right.add(s);
             }
@@ -91,16 +93,18 @@ class Node implements IRBTree {
     }
     
     /**
-     * WHAT THE HELL DOES THIS DO????
+     * Assures that the rules of RBTrees are enforced, thus balancing the tree.
+     * 
+     * Rules: - No Red Node has a red Parent - All Paths from a Node to a Leaf
+     * have the same number of Black Nodes.
      * 
      * INVARIANT: SUB TREES OF THIS ARE BALANCED AND COLORED CORRECTLY
      * THIS.COLOR = RED
      */
     protected void balance() {
-        IRBTree uncle;
         Node node = this;
         
-        if (this.parent instanceof Node) { // IS THIS THE ROOT NODE?
+        if (!(this.parent instanceof Node)) { // IS THIS THE ROOT NODE?
             node.color = Color.BLACK;
         } // HAS PARENT
         
@@ -109,7 +113,7 @@ class Node implements IRBTree {
         } // HAS PARENT && THIS.PARENT.COLOR == RED => HAS GRANDPARENT
         
         else {
-            uncle = node.parent.getSibling();
+            IRBTree uncle = node.parent.getSibling();
             if (uncle.getColor() == Color.RED) {
                 node.parent.setColor(Color.BLACK);
                 uncle.setColor(Color.BLACK);
@@ -121,23 +125,23 @@ class Node implements IRBTree {
                 if (node.equals(node.parent.right) &&
                         node.parent.equals(node.parent.parent.left)) {
                     node.rotateLeft();
-                    node = (Node) (node.left);
+                    node = (Node) (node.left); // Node = old parent
                 }
                 
                 else if (node.equals(node.parent.left) &&
                         node.parent.equals(node.parent.parent.right)) {
                     node.rotateRight();
-                    node = (Node) (node.right);
+                    node = (Node) (node.right); // Node = old parent
                 }
                 
                 node.parent.setColor(Color.BLACK);
                 node.parent.parent.setColor(Color.RED);
                 
                 if (node.equals(node.parent.left)) {
-                    node.parent.parent.rotateRight();
+                    node.parent.rotateRight();
                 }
                 else {
-                    node.parent.parent.rotateLeft();
+                    node.parent.rotateLeft();
                 }
             }
         }
@@ -230,27 +234,48 @@ class Node implements IRBTree {
     }
     
     /**
-     * MUST HAVE RIGHT CHILD NODE Mutates this and subnodes of this so that this
-     * is now the left subNode of this.right returns the new top node.
+     * repOk
+     * 
+     * @return is this rep ok?
      */
-    protected void rotateLeft() {
-        Node oldParent = (Node) (this.parent.parent.left);
-        IRBTree oldLeft = this.left;
-        this.parent.parent.left = this;
-        this.left = oldParent;
-        oldParent.right = oldLeft;
+    public boolean repOK() {
+        return true;
     }
     
     /**
-     * MUST HAVE LEFT CHILD NODE. Mutates this and subnodes of this so that this
-     * is now the right subNode of this.left returns the new top node.
+     * MUST HAVE GRANDPARENT. Mutates this and subnodes of this so that this is
+     * now the left subNode of this.right returns the new top node.
+     */
+    protected void rotateLeft() {
+        Node oldParent = (this.parent);
+        IRBTree oldLeft = this.left;
+        Node oldGP = this.parent.parent;
+        this.left = oldParent;
+        oldParent.right = oldLeft;
+        oldParent.parent = this;
+        this.parent = oldGP;
+        
+        if (this.parent instanceof Node) {
+            this.parent.left = this;
+        }
+    }
+    
+    /**
+     * MUST HAVE GRANDPARENT. Mutates this and subnodes of this so that this is
+     * now the right subNode of this.left returns the new top node.
      */
     protected void rotateRight() {
-        Node oldParent = (Node) (this.parent.parent.left);
+        Node oldParent = (this.parent);
         IRBTree oldRight = this.right;
-        this.parent.parent.right = this;
+        Node oldGP = this.parent.parent;
         this.right = oldParent;
         oldParent.left = oldRight;
+        oldParent.parent = this;
+        this.parent = oldGP;
+        
+        if (this.parent instanceof Node) {
+            this.parent.right = this;
+        }
     }
     
     /**
@@ -304,4 +329,8 @@ class Node implements IRBTree {
         return ret.substring(0, ret.length() - 2);
     }
     
+    public String toStructString() {
+        return " (T " + this.color + this.left.toStructString() +
+                this.right.toStructString() + ") ";
+    }
 }

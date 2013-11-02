@@ -8,6 +8,18 @@ import java.util.Comparator;
  */
 class StringByLength implements Comparator<String> {
     
+    
+    /**
+     * repOk
+     * @return is this rep ok?
+     */
+    public boolean repOK() {
+        return this.compare("a", "aa") ==  -1 &&
+               this.compare("aa", "a") == 1 &&
+               this.compare("a", "b") == 0  &&
+               this.toString().equals("StringByLength");
+    }
+    
     /**
      * @param s1 String 1
      * @param s2 String 2

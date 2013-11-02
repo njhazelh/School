@@ -24,7 +24,7 @@ interface IBTree extends Iterable<String> {
      * @param s The String to look for?
      * @return true if present.
      */
-    public abstract boolean contains(String s);
+    public boolean contains(String s);
     
     /**
      * Is that a RBTree with the same Strings and Comparator as that?
@@ -33,7 +33,7 @@ interface IBTree extends Iterable<String> {
      * @return true if equal.
      */
     @Override
-    public abstract boolean equals(Object that);
+    public boolean equals(Object that);
     
     /**
      * Get an int such that the hashCode/equals relationship holds true.
@@ -42,21 +42,21 @@ interface IBTree extends Iterable<String> {
      *         hashCode.
      */
     @Override
-    public abstract int hashCode();
+    public int hashCode();
     
     /**
      * How many Strings are in this RBTree
      * 
      * @return # of Strings in RBTree
      */
-    public abstract int size();
+    public int size();
     
     /**
      * Make an array of all this Strings of this RBTree in order
      * 
      * @return an ordered ArrayList<String>
      */
-    public abstract ArrayList<String> toArrayList();
+    public ArrayList<String> toArrayList();
     
     /**
      * Get a string representing this RBTree
@@ -64,7 +64,14 @@ interface IBTree extends Iterable<String> {
      * @return "s1, s2, s3, ..."
      */
     @Override
-    public abstract String toString();
+    public String toString();
+    
+    /**
+     * Generate a String that sorta represents the structure of this Tree.
+     * 
+     * @return the string
+     */
+    public String toStructString();
 }
 
 /**
@@ -76,12 +83,14 @@ interface IBTree extends Iterable<String> {
 interface Interfaces {
     /**
      * What is the color of this thing?
+     * 
      * @return the color of this.
      */
     public Color getColor();
     
     /**
      * Set the Color of this thing
+     * 
      * @param c the new color
      */
     public void setColor(Color c);
@@ -93,4 +102,4 @@ interface Interfaces {
  * @author Nicholas Jones
  * @version Oct 31, 2013
  */
-interface IRBTree extends IBTree, Interfaces { }
+interface IRBTree extends IBTree, Interfaces {}

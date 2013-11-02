@@ -2,6 +2,9 @@
  * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
  */
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,6 +49,9 @@ public class BTreeTest {
         BTree t2 = BTree.binTree(new StringByLex());
         BTree t3 = BTree.binTree(new StringByLength());
         
+        Assert.assertTrue("repOk, t1", t1.repOK());
+        Assert.assertTrue("repOk, t2", t2.repOK());
+        Assert.assertTrue("repOk, t3", t3.repOK());
         Assert.assertFalse("No Strings in t1", t1.iterator().hasNext());
         Assert.assertEquals("t1 size = 0", t1.size(), 0);
         
@@ -71,6 +77,7 @@ public class BTreeTest {
             t2.hashCode());
         Assert.assertTrue("empty lex2  = empty lex1", t2.equals(t1));
         Assert.assertFalse("empty len != empty lex", t1.equals(t3));
+        Assert.assertFalse("empty == \"Hello\"", t1.equals("Hello"));
         
         t1.build(Arrays.asList("a", "bb", "cc"));
         t2.build(Arrays.asList("a", "bb", "cc"));
@@ -97,39 +104,61 @@ public class BTreeTest {
     /**
      * test
      */
-    /*
-     * @Test public void testIterator() { BTree t1 = BTree.binTree(new
-     * StringByLex()); BTree t2 = BTree.binTree(new StringByLex()); BTree t3 =
-     * BTree.binTree(new StringByLength());
-     * 
-     * t1.build(Arrays.asList("a", "bb", "cc")); t2.build(Arrays.asList("a",
-     * "bb", "ccd")); t3.build(Arrays.asList("a", "b"));
-     * 
-     * Iterator<String> i1 = t1.iterator();
-     * 
-     * Assert.assertTrue("i1.hasNext()", i1.hasNext());
-     * Assert.assertTrue("i1.next().equals()", i1.next().equals("a"));
-     * Assert.assertTrue("i1.next = bb", i1.next().equals("bb"));
-     * 
-     * try { t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"));
-     * Assert.fail("Iterators Concurrent 1: Stopped"); } catch
-     * (ConcurrentModificationException e) {
-     * Assert.assertTrue("Iterators Concurrent 1: Running", e.getMessage()
-     * .equals("1 iterators running")); }
-     * 
-     * Assert.assertTrue("i1.next = cc", i1.next().equals("cc")); while
-     * (i1.hasNext()) { i1.next(); }
-     * 
-     * try { t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa")); } catch
-     * (ConcurrentModificationException e) {
-     * Assert.fail("Iterators Concurrent 2: Running"); }
-     * 
-     * try { i1.next(); Assert.fail("Has Next"); } catch (NoSuchElementException
-     * e) { Assert.assertNotNull("No Such Element", e); }
-     * 
-     * try { i1.remove(); } catch (UnsupportedOperationException e) {
-     * Assert.assertNotNull("Operation not supported", e); } }
-     */
+    @Test
+    public void testIterator() {
+        BTree t1 = BTree.binTree(new
+            StringByLex());
+        BTree t2 = BTree.binTree(new StringByLex());
+        BTree t3 =
+                BTree.binTree(new StringByLength());
+        
+        t1.build(Arrays.asList("a", "bb", "cc"));
+        t2.build(Arrays.asList("a",
+            "bb", "ccd"));
+        t3.build(Arrays.asList("a", "b"));
+        
+        Iterator<String> i1 = t1.iterator();
+        
+        Assert.assertTrue("i1.hasNext()", i1.hasNext());
+        Assert.assertTrue("i1.next().equals()", i1.next().equals("a"));
+        Assert.assertTrue("i1.next = bb", i1.next().equals("bb"));
+        
+        try {
+            t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"));
+            Assert.fail("Iterators Concurrent 1: Stopped");
+        }
+        catch (ConcurrentModificationException e) {
+            Assert.assertTrue("Iterators Concurrent 1: Running", e.getMessage()
+                .equals("1 iterators running"));
+        }
+        
+        Assert.assertTrue("i1.next = cc", i1.next().equals("cc"));
+        while (i1.hasNext()) {
+            i1.next();
+        }
+        
+        try {
+            t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"));
+        }
+        catch (ConcurrentModificationException e) {
+            Assert.fail("Iterators Concurrent 2: Running");
+        }
+        
+        try {
+            i1.next();
+            Assert.fail("Has Next");
+        }
+        catch (NoSuchElementException e) {
+            Assert.assertNotNull("No Such Element", e);
+        }
+        
+        try {
+            i1.remove();
+        }
+        catch (UnsupportedOperationException e) {
+            Assert.assertNotNull("Operation not supported", e);
+        }
+    }
     
     /**
      * Test toString()
@@ -138,13 +167,14 @@ public class BTreeTest {
     public void testToString() {
         BTree t1 = BTree.binTree(new StringByLex());
         BTree t2 = BTree.binTree(new StringByLex());
-        BTree t3 = BTree.binTree(new StringByLength());
+        BTree t3 = BTree.binTree(new StringByLex());
         
         Assert.assertTrue("emptyLex.toString()", t1.toString().equals(""));
         Assert.assertTrue("emptyLength.toString()", t3.toString().equals(""));
         
         t1.build(Arrays.asList("a", "b", "c"));
         t2.build(Arrays.asList("a", "a", "c"), 2);
+        t3.build(Arrays.asList("e", "a", "f", "e", "d", "b", "z", "c"), -1);
         
         Assert
             .assertTrue("{a,b,c}.toString()", t1.toString()
@@ -152,5 +182,7 @@ public class BTreeTest {
         Assert.assertEquals("t1.size = 3", t1.size(), 3);
         Assert.assertTrue("t2.toString()", t2.toString().equals("a"));
         Assert.assertEquals("t2.size = 1", t2.size(), 1);
+        Assert.assertTrue("t3 toString",
+            t3.toString().equals("a, b, c, d, e, f, z"));
     }
 }

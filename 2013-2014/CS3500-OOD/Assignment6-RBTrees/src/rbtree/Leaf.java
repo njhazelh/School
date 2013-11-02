@@ -27,7 +27,7 @@ class Leaf implements IRBTree {
      * Force the constructor to be private. Only method of access is from
      * Leaf.LEAF, since Leaf is a singleton object.
      */
-    private Leaf() { }
+    private Leaf() {}
     
     /**
      * Cannot add to a Leaf. Instead swap with Node on higher level.
@@ -94,6 +94,15 @@ class Leaf implements IRBTree {
     }
     
     /**
+     * repOk
+     * 
+     * @return is this rep ok?
+     */
+    public boolean repOK() {
+        return true;
+    }
+    
+    /**
      * Cannot set the color of a Leaf. Leaves are always BLACK.
      * 
      * @param c the new color
@@ -132,5 +141,15 @@ class Leaf implements IRBTree {
     @Override
     public String toString() {
         return "";
+    }
+    
+    /**
+     * Generate a String that sorta describes the Structure
+     * 
+     * @return the String
+     */
+    @Override
+    public String toStructString() {
+        return " x ";
     }
 }
