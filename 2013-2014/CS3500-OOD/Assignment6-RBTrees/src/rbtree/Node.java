@@ -19,7 +19,7 @@ class Node implements IRBTree {
     private String             val;
     private Color              color;
     private Node               parent; // Null when highest Node (root).
-    
+                                       
     /**
      * Create a new Node with the given values.
      * 
@@ -38,8 +38,8 @@ class Node implements IRBTree {
         this.right = right;
     }
     
-    /**s
-     * Create a new Node with the given values.
+    /**
+     * s Create a new Node with the given values.
      * 
      * @param color The color of this Node
      * @param comp The comparator of this Node.
@@ -108,34 +108,37 @@ class Node implements IRBTree {
             return;
         } // HAS PARENT && THIS.PARENT.COLOR == RED => HAS GRANDPARENT
         
-        else if ((uncle = node.parent.getSibling()).getColor() == Color.RED) {
-            node.parent.setColor(Color.BLACK);
-            uncle.setColor(Color.BLACK);
-            node.parent.parent.setColor(Color.RED);
-            node.parent.parent.balance();
-        } // HAS PARENT and PARENT IS RED and HAS GRANDPARENT and NO RED UNCLE
-        
         else {
-            if (node.equals(node.parent.right) &&
-                    node.parent.equals(node.parent.parent.left)) {
-                node.rotateLeft();
-                node = (Node) (node.left);
-            }
+            uncle = node.parent.getSibling();
+            if (uncle.getColor() == Color.RED) {
+                node.parent.setColor(Color.BLACK);
+                uncle.setColor(Color.BLACK);
+                node.parent.parent.setColor(Color.RED);
+                node.parent.parent.balance();
+            } // HAS PARENT && PARENT IS RED && HAS GRANDPARENT && NO RED UNCLE
             
-            else if (node.equals(node.parent.left) &&
-                    node.parent.equals(node.parent.parent.right)) {
-                node.rotateRight();
-                node = (Node) (node.right);
-            }
-            
-            node.parent.setColor(Color.BLACK);
-            node.parent.parent.setColor(Color.RED);
-            
-            if (node.equals(node.parent.left)) {
-                node.parent.parent.rotateRight();
-            }
             else {
-                node.parent.parent.rotateLeft();
+                if (node.equals(node.parent.right) &&
+                        node.parent.equals(node.parent.parent.left)) {
+                    node.rotateLeft();
+                    node = (Node) (node.left);
+                }
+                
+                else if (node.equals(node.parent.left) &&
+                        node.parent.equals(node.parent.parent.right)) {
+                    node.rotateRight();
+                    node = (Node) (node.right);
+                }
+                
+                node.parent.setColor(Color.BLACK);
+                node.parent.parent.setColor(Color.RED);
+                
+                if (node.equals(node.parent.left)) {
+                    node.parent.parent.rotateRight();
+                }
+                else {
+                    node.parent.parent.rotateLeft();
+                }
             }
         }
     }
@@ -177,6 +180,21 @@ class Node implements IRBTree {
     }
     
     /**
+     * Get the Root (highest Node) in this tree.
+     * 
+     * @return the root.
+     */
+    public Node getRoot() {
+        Node p = this;
+        
+        while (p.parent instanceof Node) {
+            p = p.parent;
+        }
+        
+        return p;
+    }
+    
+    /**
      * This must have a parent for this to work.
      * 
      * @return The other child of this Node's parent.
@@ -197,7 +215,7 @@ class Node implements IRBTree {
      */
     @Override
     public int hashCode() {
-        return this.size() + this.comp.hashCode();
+        return this.size();
     }
     
     /**

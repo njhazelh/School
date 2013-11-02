@@ -21,7 +21,7 @@ class Leaf implements IRBTree {
     /**
      * A SINGLETON INSTANCE OF A LEAF
      */
-    public static final Leaf LEAF = new Leaf();
+    public static final Leaf INSTANCE = new Leaf();
     
     /**
      * Force the constructor to be private. Only method of access is from

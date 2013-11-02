@@ -23,25 +23,27 @@ public class BTree implements Iterable<String> {
     private RBTree             tree;
     
     /**
-     * This is a private constructor for BTree that creates an instance of 
-     * BTree that uses the Comparator<String> comp to organize Strings.
+     * This is a static factory method that produces in empty instance of a
+     * BTree
+     * 
+     * @param comp The comparator to use to organize Strings.
+     * @return An empty BTree that uses that comparator comp to organize Strings
+     *         into accending order.
+     * 
+     */
+    public static BTree binTree(Comparator<String> comp) {
+        return new BTree(comp);
+    }
+    
+    /**
+     * This is a private constructor for BTree that creates an instance of BTree
+     * that uses the Comparator<String> comp to organize Strings.
+     * 
      * @param comp The comparator to use.
      */
     private BTree(Comparator<String> comp) {
         this.comp = comp;
         this.tree = RBTree.binTree(comp);
-    }
-    
-    /**
-     * This is a static factory method that produces in empty instance of a BTree
-     *
-     * @param comp The comparator to use to organize Strings.
-     * @return An empty BTree that uses that comparator comp to organize Strings
-     * into accending order.
-     * 
-     */
-    public static BTree binTree(Comparator<String> comp) {
-        return new BTree(comp);
     }
     
     /**
@@ -132,6 +134,18 @@ public class BTree implements Iterable<String> {
     @Override
     public Iterator<String> iterator() {
         return this.tree.iterator();
+    }
+    
+    /**
+     * repOk
+     * 
+     * @return Is the representation of this BTree valid?
+     */
+    public boolean repOk() {
+        for (String s : this) {
+            this.contains(s);
+        }
+        return true;
     }
     
     /**
