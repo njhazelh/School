@@ -71,7 +71,7 @@ public class BTreeTest {
         
         Assert.assertTrue("empty lex1 = empty lex2", t1.equals(t2));
         Assert.assertEquals("empty hash==empty hash", t1.hashCode(),
-                t2.hashCode());
+            t2.hashCode());
         Assert.assertTrue("empty lex2  = empty lex1", t2.equals(t1));
         Assert.assertFalse("empty len != empty lex", t1.equals(t3));
         
@@ -81,7 +81,7 @@ public class BTreeTest {
         
         Assert.assertTrue("{a,bb,cc}=={a,bb,cc}", t1.equals(t2));
         Assert.assertEquals("{a,bb,cc}hash=={a,bb,cc}hash", t1.hashCode(),
-                t2.hashCode());
+            t2.hashCode());
         Assert.assertTrue("{a,bb,cc}=={a,bb,cc}", t2.equals(t1));
         Assert.assertFalse("t1 != t3", t1.equals(t3));
         Assert.assertFalse("t1 != null", t1.equals(o));
@@ -122,7 +122,7 @@ public class BTreeTest {
         }
         catch (ConcurrentModificationException e) {
             Assert.assertTrue("Iterators Concurrent 1: Running", e.getMessage()
-                    .equals("1 iterators running"));
+                .equals("1 iterators running"));
         }
         
         Assert.assertTrue("i1.next = cc", i1.next().equals("cc"));
@@ -168,7 +168,9 @@ public class BTreeTest {
         t1.build(Arrays.asList("a", "b", "c"));
         t2.build(Arrays.asList("a", "a", "c"), 2);
         
-        Assert.assertTrue("{a,b,c}.toString()", t1.toString().equals("a, b, c"));
+        Assert
+            .assertTrue("{a,b,c}.toString()", t1.toString()
+                .equals("a, b, c"));
         Assert.assertEquals("t1.size = 3", t1.size(), 3);
         Assert.assertTrue("t2.toString()", t2.toString().equals("a"));
         Assert.assertEquals("t2.size = 1", t2.size(), 1);

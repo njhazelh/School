@@ -74,7 +74,9 @@ class StringWithOutPrefixByLex implements Comparator<String> {
      */
     @Override
     public int compare(String o1, String o2) {
-        String s1, s2;
+        String s1;
+        String s2;
+        
         if (o1.length() > 4) {
             s1 = o1.substring(3);
         }

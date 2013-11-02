@@ -30,6 +30,12 @@ public class RBTree implements Iterable<String> {
         return new RBTree(comp);
     }
     
+    /**
+     * This is the private RBTree Constructor.
+     * A factory interface is provided from creating instances of RBTree.
+     * 
+     * @param comp The comparator this tree will use to organize Strings.
+     */
     private RBTree(Comparator<String> comp) {
         this.comp = comp;
         this.tree = Leaf.LEAF;
@@ -43,10 +49,10 @@ public class RBTree implements Iterable<String> {
     public void add(String s) {
         try { // ASSUME ADDING TO NODE
             this.tree.add(s);
-            this.tree = ((Node)this.tree).balance();
         }
-        catch (UnsupportedOperationException e) { // ADD TO LEAF
-            this.tree = new Node(Color.BLACK, this.comp, this.tree, s, this.tree);
+        catch (UnsupportedOperationException e) { // SWAP NODE WITH LEAF
+            this.tree =
+                    new Node(Color.BLACK, this.comp, this.tree, s, this.tree);
         }
     }
     
@@ -83,8 +89,9 @@ public class RBTree implements Iterable<String> {
     }
     
     /**
-     * Get an iterator that iterates from the lowest values to the highest values
-     * (according to the comparator.)
+     * Get an iterator that iterates from the lowest values to the highest
+     * values (according to the comparator.)
+     * 
      * @return An iterator for this RBTree
      */
     @Override

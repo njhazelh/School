@@ -18,18 +18,21 @@ import java.util.Iterator;
  * @version Oct 30, 2013
  */
 class Leaf implements IRBTree {
-    
+    /**
+     * A SINGLETON INSTANCE OF A LEAF
+     */
     public static final Leaf LEAF = new Leaf();
     
     /**
      * Force the constructor to be private. Only method of access is from
      * Leaf.LEAF, since Leaf is a singleton object.
      */
-    private Leaf() {}
+    private Leaf() { }
     
     /**
      * Cannot add to a Leaf. Instead swap with Node on higher level.
      * 
+     * @param s The String to add.
      * @throws UnsupportedOperationException
      */
     @Override
@@ -40,6 +43,7 @@ class Leaf implements IRBTree {
     /**
      * Leaves do not contain Strings.
      * 
+     * @param s The String to check for.
      * @return false
      */
     @Override
@@ -50,6 +54,7 @@ class Leaf implements IRBTree {
     /**
      * Is that an instance of Leaf?
      * 
+     * @param that The Object to compare against.
      * @return true if instance of Leaf.
      */
     @Override
@@ -79,17 +84,8 @@ class Leaf implements IRBTree {
     }
     
     /**
-     * This is a Leaf.
-     * 
-     * @return true;
-     */
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-    
-    /**
      * Get an iterator that has nothing to iterate through.
+     * 
      * @return An iterator for this RBTree
      */
     @Override
@@ -100,6 +96,7 @@ class Leaf implements IRBTree {
     /**
      * Cannot set the color of a Leaf. Leaves are always BLACK.
      * 
+     * @param c the new color
      * @throws UnsupportedOperationException
      */
     @Override

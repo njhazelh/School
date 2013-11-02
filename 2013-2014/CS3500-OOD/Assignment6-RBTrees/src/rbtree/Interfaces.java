@@ -45,13 +45,6 @@ interface IBTree extends Iterable<String> {
     public abstract int hashCode();
     
     /**
-     * Is this a Leaf?
-     * 
-     * @return true if it is a Leaf.
-     */
-    public abstract boolean isLeaf();
-    
-    /**
      * How many Strings are in this RBTree
      * 
      * @return # of Strings in RBTree
@@ -82,14 +75,14 @@ interface IBTree extends Iterable<String> {
  */
 interface Interfaces {
     /**
-     * 
-     * @return
+     * What is the color of this thing?
+     * @return the color of this.
      */
     public Color getColor();
     
     /**
-     * 
-     * @param c
+     * Set the Color of this thing
+     * @param c the new color
      */
     public void setColor(Color c);
 }
@@ -100,4 +93,4 @@ interface Interfaces {
  * @author Nicholas Jones
  * @version Oct 31, 2013
  */
-interface IRBTree extends IBTree, Interfaces {}
+interface IRBTree extends IBTree, Interfaces { }

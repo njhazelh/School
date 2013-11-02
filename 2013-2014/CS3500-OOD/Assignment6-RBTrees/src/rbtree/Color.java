@@ -10,5 +10,12 @@ package rbtree;
  * @version Oct 30, 2013
  */
 enum Color {
-    RED, BLACK
+    /**
+     * The Color RED
+     */
+     RED,
+     /**
+      * The Color BLACK
+      */
+     BLACK;
 }
