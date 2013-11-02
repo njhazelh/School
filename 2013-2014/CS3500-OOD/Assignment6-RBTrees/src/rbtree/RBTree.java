@@ -1,5 +1,7 @@
 /*
- * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
  */
 
 package rbtree;
@@ -18,7 +20,7 @@ import java.util.Iterator;
 public class RBTree implements Iterable<String> {
     private IRBTree            tree;
     private Comparator<String> comp;
-    
+
     /**
      * Factory: Create an empty RBTree that uses the given Comparator to
      * organize Strings.
@@ -29,7 +31,7 @@ public class RBTree implements Iterable<String> {
     public static RBTree binTree(Comparator<String> comp) {
         return new RBTree(comp);
     }
-    
+
     /**
      * This is the private RBTree Constructor. A factory interface is provided
      * from creating instances of RBTree.
@@ -40,7 +42,7 @@ public class RBTree implements Iterable<String> {
         this.comp = comp;
         this.tree = Leaf.INSTANCE;
     }
-    
+
     /**
      * Try to add a String to the RBTree.
      * 
@@ -52,11 +54,11 @@ public class RBTree implements Iterable<String> {
             this.tree = ((Node) this.tree).getRoot();
         }
         catch (UnsupportedOperationException e) { // SWAP NODE WITH LEAF
-            this.tree =
-                    new Node(Color.BLACK, this.comp, this.tree, s, this.tree);
+            this.tree = new Node(Color.BLACK, this.comp, this.tree, s,
+                    this.tree);
         }
     }
-    
+
     /**
      * Does this RBTree contain s?
      * 
@@ -66,7 +68,7 @@ public class RBTree implements Iterable<String> {
     public boolean contains(String s) {
         return this.tree.contains(s);
     }
-    
+
     /**
      * Is that a RBTree with the same Strings and Comparator as that?
      * 
@@ -75,9 +77,10 @@ public class RBTree implements Iterable<String> {
      */
     @Override
     public boolean equals(Object that) {
-        return that instanceof RBTree && ((RBTree) that).tree.equals(this.tree);
+        return (that instanceof RBTree)
+                && ((RBTree) that).tree.equals(this.tree);
     }
-    
+
     /**
      * Get an int such that the hashCode/equals relationship holds true.
      * 
@@ -88,7 +91,7 @@ public class RBTree implements Iterable<String> {
     public int hashCode() {
         return this.tree.hashCode();
     }
-    
+
     /**
      * Get an iterator that iterates from the lowest values to the highest
      * values (according to the comparator.)
@@ -99,16 +102,19 @@ public class RBTree implements Iterable<String> {
     public Iterator<String> iterator() {
         return this.tree.iterator();
     }
-    
+
     /**
      * repOk
      * 
      * @return Is the representation for this RBTree valid?
      */
     public boolean repOK() {
-        return this.tree.getColor() == Color.BLACK;
+        return (this.tree.getColor() == Color.BLACK)
+                && (this.tree.size() == this.size())
+                && this.tree.toString().equals(this.toString())
+                && this.tree.repOK();
     }
-    
+
     /**
      * How many Strings are in this RBTree
      * 
@@ -117,7 +123,7 @@ public class RBTree implements Iterable<String> {
     public int size() {
         return this.tree.size();
     }
-    
+
     /**
      * Make an array of all this Strings of this RBTree in order
      * 
@@ -126,7 +132,7 @@ public class RBTree implements Iterable<String> {
     public ArrayList<String> toArrayList() {
         return this.tree.toArrayList();
     }
-    
+
     /**
      * Get a string representing this RBTree
      * 

@@ -1,5 +1,7 @@
 /*
- * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
  */
 package rbtree;
 
@@ -13,9 +15,9 @@ enum Color {
     /**
      * The Color RED
      */
-     RED,
-     /**
-      * The Color BLACK
-      */
-     BLACK;
+    RED,
+    /**
+     * The Color BLACK
+     */
+    BLACK;
 }

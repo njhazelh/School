@@ -1,5 +1,7 @@
 /*
- * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
  */
 
 package rbtree;
@@ -22,13 +24,14 @@ class Leaf implements IRBTree {
      * A SINGLETON INSTANCE OF A LEAF
      */
     public static final Leaf INSTANCE = new Leaf();
-    
+
     /**
      * Force the constructor to be private. Only method of access is from
      * Leaf.LEAF, since Leaf is a singleton object.
      */
-    private Leaf() {}
-    
+    private Leaf() {
+    }
+
     /**
      * Cannot add to a Leaf. Instead swap with Node on higher level.
      * 
@@ -39,7 +42,7 @@ class Leaf implements IRBTree {
     public void add(String s) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Cannot Add to a Leaf");
     }
-    
+
     /**
      * Leaves do not contain Strings.
      * 
@@ -50,7 +53,7 @@ class Leaf implements IRBTree {
     public boolean contains(String s) {
         return false;
     }
-    
+
     /**
      * Is that an instance of Leaf?
      * 
@@ -61,7 +64,7 @@ class Leaf implements IRBTree {
     public boolean equals(Object that) {
         return that instanceof Leaf;
     }
-    
+
     /**
      * All Leaves are BLACK.
      * 
@@ -71,7 +74,7 @@ class Leaf implements IRBTree {
     public Color getColor() {
         return Color.BLACK;
     }
-    
+
     /**
      * Fulfill that hashCode/equals agreement.
      * 
@@ -82,7 +85,7 @@ class Leaf implements IRBTree {
     public int hashCode() {
         return 0;
     }
-    
+
     /**
      * Get an iterator that has nothing to iterate through.
      * 
@@ -92,16 +95,18 @@ class Leaf implements IRBTree {
     public Iterator<String> iterator() {
         return this.toArrayList().iterator();
     }
-    
+
     /**
      * repOk
      * 
      * @return is this rep ok?
      */
+    @Override
     public boolean repOK() {
-        return true;
+        return (this.getColor() == Color.BLACK) && this.toString().equals("")
+                && this.equals(Leaf.INSTANCE) && (this.size() == 0);
     }
-    
+
     /**
      * Cannot set the color of a Leaf. Leaves are always BLACK.
      * 
@@ -112,7 +117,7 @@ class Leaf implements IRBTree {
     public void setColor(Color c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Leaves must be BLACK");
     }
-    
+
     /**
      * How many Strings are in this Leaf?
      * 
@@ -122,7 +127,7 @@ class Leaf implements IRBTree {
     public int size() {
         return 0;
     }
-    
+
     /**
      * Make an ArrayList with all the Strings in this IRBTree in order
      * 
@@ -132,7 +137,7 @@ class Leaf implements IRBTree {
     public ArrayList<String> toArrayList() {
         return new ArrayList<String>();
     }
-    
+
     /**
      * Get a String representing the Strings in this IRBTree.
      * 
@@ -142,7 +147,7 @@ class Leaf implements IRBTree {
     public String toString() {
         return "";
     }
-    
+
     /**
      * Generate a String that sorta describes the Structure
      * 

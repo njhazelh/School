@@ -1,5 +1,7 @@
 /*
- * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
  */
 
 package rbtree;
@@ -19,7 +21,7 @@ class Node implements IRBTree {
     private String             val;
     private Color              color;
     private Node               parent; // Null when highest Node (root).
-                                       
+
     /**
      * Create a new Node with the given values.
      * 
@@ -37,7 +39,7 @@ class Node implements IRBTree {
         this.val = val;
         this.right = right;
     }
-    
+
     /**
      * Create a new Node with the given values.
      * 
@@ -57,25 +59,27 @@ class Node implements IRBTree {
         this.val = val;
         this.right = right;
     }
-    
+
     /**
      * Add the String s to this Node if it is not already present (comparator
      * returns 0 for some String already in this Node).
+     * 
+     * Note: getRoot() may need to be called on what was the root node of this
+     * tree. balancing can shift the root, but the reference stays the same.
      * 
      * @param s The String to add.
      */
     @Override
     public void add(String s) {
         int compResult = this.comp.compare(s, this.val);
-        
+
         if (compResult < 0) { // ADD TO LEFT
             try { // ASSUME ADDING TO NODE
                 this.left.add(s);
             }
             catch (UnsupportedOperationException e) { // ADD TO LEAF
-                this.left =
-                        new Node(Color.RED, this.comp, this, this.left, s,
-                            this.left);
+                this.left = new Node(Color.RED, this.comp, this, this.left, s,
+                        this.left);
                 ((Node) this.left).balance();
             }
         }
@@ -84,14 +88,13 @@ class Node implements IRBTree {
                 this.right.add(s);
             }
             catch (UnsupportedOperationException e) { // ADD TO LEAF
-                this.right =
-                        new Node(Color.RED, this.comp, this, this.right, s,
-                            this.right);
+                this.right = new Node(Color.RED, this.comp, this, this.right,
+                        s, this.right);
                 ((Node) this.right).balance();
             }
         }
     }
-    
+
     /**
      * Assures that the rules of RBTrees are enforced, thus balancing the tree.
      * 
@@ -103,15 +106,15 @@ class Node implements IRBTree {
      */
     protected void balance() {
         Node node = this;
-        
+
         if (!(this.parent instanceof Node)) { // IS THIS THE ROOT NODE?
             node.color = Color.BLACK;
         } // HAS PARENT
-        
+
         else if (node.parent.getColor() == Color.BLACK) {
             return;
         } // HAS PARENT && THIS.PARENT.COLOR == RED => HAS GRANDPARENT
-        
+
         else {
             IRBTree uncle = node.parent.getSibling();
             if (uncle.getColor() == Color.RED) {
@@ -120,23 +123,23 @@ class Node implements IRBTree {
                 node.parent.parent.setColor(Color.RED);
                 node.parent.parent.balance();
             } // HAS PARENT && PARENT IS RED && HAS GRANDPARENT && NO RED UNCLE
-            
+
             else {
-                if (node.equals(node.parent.right) &&
-                        node.parent.equals(node.parent.parent.left)) {
+                if (node.equals(node.parent.right)
+                        && node.parent.equals(node.parent.parent.left)) {
                     node.rotateLeft();
                     node = (Node) (node.left); // Node = old parent
                 }
-                
-                else if (node.equals(node.parent.left) &&
-                        node.parent.equals(node.parent.parent.right)) {
+
+                else if (node.equals(node.parent.left)
+                        && node.parent.equals(node.parent.parent.right)) {
                     node.rotateRight();
                     node = (Node) (node.right); // Node = old parent
                 }
-                
+
                 node.parent.setColor(Color.BLACK);
                 node.parent.parent.setColor(Color.RED);
-                
+
                 if (node.equals(node.parent.left)) {
                     node.parent.rotateRight();
                 }
@@ -146,7 +149,7 @@ class Node implements IRBTree {
             }
         }
     }
-    
+
     /**
      * Does this Node contain the String s?
      * 
@@ -155,11 +158,13 @@ class Node implements IRBTree {
      */
     @Override
     public boolean contains(String s) {
-        return this.val.equals(s) ||
-                (this.comp.compare(s, this.val) < 0 && this.left.contains(s)) ||
-                (this.comp.compare(s, this.val) > 0 && this.right.contains(s));
+        return this.val.equals(s)
+                || ((this.comp.compare(s, this.val) < 0) && this.left
+                        .contains(s))
+                || ((this.comp.compare(s, this.val) > 0) && this.right
+                        .contains(s));
     }
-    
+
     /**
      * Is that an instance of Node with the same comparator and Strings?
      * 
@@ -168,11 +173,10 @@ class Node implements IRBTree {
      */
     @Override
     public boolean equals(Object that) {
-        return that instanceof Node &&
-                ((Node) that).comp.equals(this.comp) &&
-                ((Node) that).toArrayList().equals(this.toArrayList());
+        return (that instanceof Node) && ((Node) that).comp.equals(this.comp)
+                && ((Node) that).toArrayList().equals(this.toArrayList());
     }
-    
+
     /**
      * What color is this Node?
      * 
@@ -182,7 +186,7 @@ class Node implements IRBTree {
     public Color getColor() {
         return this.color;
     }
-    
+
     /**
      * Get the Root (highest Node) in this tree.
      * 
@@ -190,14 +194,14 @@ class Node implements IRBTree {
      */
     public Node getRoot() {
         Node p = this;
-        
+
         while (p.parent instanceof Node) {
             p = p.parent;
         }
-        
+
         return p;
     }
-    
+
     /**
      * This must have a parent for this to work.
      * 
@@ -211,7 +215,7 @@ class Node implements IRBTree {
             return this.parent.left;
         }
     }
-    
+
     /**
      * a.equals(b) => a.hashCode == b.hashCode()
      * 
@@ -221,7 +225,7 @@ class Node implements IRBTree {
     public int hashCode() {
         return this.size();
     }
-    
+
     /**
      * Get an iterator that iterates from the lowest values to the highest
      * values (according to the comparator.)
@@ -232,16 +236,33 @@ class Node implements IRBTree {
     public Iterator<String> iterator() {
         return this.toArrayList().iterator();
     }
-    
+
     /**
      * repOk
      * 
-     * @return is this rep ok?
+     * @return is this representation ok?
      */
+    @Override
     public boolean repOK() {
-        return true;
+        for (String s : this.left) {
+            if (this.comp.compare(s, this.val) >= 0) {
+                System.out.println(s);
+                System.out.println(this);
+                return false;
+            }
+        }
+
+        for (String s : this.right) {
+            if (this.comp.compare(s, this.val) <= 0) {
+                System.out.println(this);
+                System.out.println(s);
+                return false;
+            }
+        }
+
+        return this.left.repOK() && this.right.repOK();
     }
-    
+
     /**
      * MUST HAVE GRANDPARENT. Mutates this and subnodes of this so that this is
      * now the left subNode of this.right returns the new top node.
@@ -250,16 +271,24 @@ class Node implements IRBTree {
         Node oldParent = (this.parent);
         IRBTree oldLeft = this.left;
         Node oldGP = this.parent.parent;
+
+        if ((oldGP instanceof Node) && oldGP.left.equals(oldParent)) {
+            oldGP.left = this;
+        }
+        else if (oldGP instanceof Node) {
+            oldGP.right = this;
+        }
+
         this.left = oldParent;
         oldParent.right = oldLeft;
         oldParent.parent = this;
         this.parent = oldGP;
-        
-        if (this.parent instanceof Node) {
-            this.parent.left = this;
+
+        if (oldLeft instanceof Node) {
+            ((Node) oldLeft).parent = oldParent;
         }
     }
-    
+
     /**
      * MUST HAVE GRANDPARENT. Mutates this and subnodes of this so that this is
      * now the right subNode of this.left returns the new top node.
@@ -268,16 +297,24 @@ class Node implements IRBTree {
         Node oldParent = (this.parent);
         IRBTree oldRight = this.right;
         Node oldGP = this.parent.parent;
+
+        if ((oldGP instanceof Node) && oldGP.left.equals(oldParent)) {
+            oldGP.left = this;
+        }
+        else if (oldGP instanceof Node) {
+            oldGP.right = this;
+        }
+
         this.right = oldParent;
         oldParent.left = oldRight;
         oldParent.parent = this;
         this.parent = oldGP;
-        
-        if (this.parent instanceof Node) {
-            this.parent.right = this;
+
+        if (oldRight instanceof Node) {
+            ((Node) oldRight).parent = oldParent;
         }
     }
-    
+
     /**
      * Set the color of this Node to the new Node.
      * 
@@ -287,7 +324,7 @@ class Node implements IRBTree {
     public void setColor(Color color) {
         this.color = color;
     }
-    
+
     /**
      * How many Strings are contained in this Node?
      * 
@@ -297,7 +334,7 @@ class Node implements IRBTree {
     public int size() {
         return 1 + this.left.size() + this.right.size();
     }
-    
+
     /**
      * Get an ordered ArrayList of the Strings in this Node.
      * 
@@ -308,10 +345,10 @@ class Node implements IRBTree {
         ArrayList<String> temp = this.left.toArrayList();
         temp.add(this.val);
         temp.addAll(this.right.toArrayList());
-        
+
         return temp;
     }
-    
+
     /**
      * Convert this Node into a String with the Strings contained listed in
      * order of appearance from left to right.
@@ -321,16 +358,17 @@ class Node implements IRBTree {
     @Override
     public String toString() {
         String ret = "";
-        
-        for (String s : this.toArrayList()) {
+
+        for (String s : this) {
             ret += s + ", ";
         }
-        
+
         return ret.substring(0, ret.length() - 2);
     }
-    
+
+    @Override
     public String toStructString() {
-        return " (T " + this.color + this.left.toStructString() +
-                this.right.toStructString() + ") ";
+        return " (T " + this.color + this.left.toStructString()
+                + this.right.toStructString() + ") ";
     }
 }

@@ -1,5 +1,7 @@
 /*
- * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu 
+ * Comments: n/a
  */
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -16,7 +18,7 @@ import org.junit.Test;
  * @version 10/8/2013
  */
 public class BTreeTest {
-    
+
     /**
      * Test contains
      */
@@ -25,11 +27,11 @@ public class BTreeTest {
         BTree t1 = BTree.binTree(new StringByLex());
         BTree t2 = BTree.binTree(new StringByLex());
         BTree t3 = BTree.binTree(new StringByLength());
-        
+
         t1.build(Arrays.asList("a", "bb", "cc"));
         t2.build(Arrays.asList("bb", "a", "ccd"));
         t3.build(Arrays.asList("a", "b"));
-        
+
         Assert.assertTrue("t1 contains a", t1.contains("a"));
         Assert.assertFalse("t1 contains f", t1.contains("f"));
         Assert.assertFalse("t1 contains aa", t1.contains("aa"));
@@ -39,7 +41,7 @@ public class BTreeTest {
         Assert.assertTrue("t3 contains a", t3.contains("a"));
         Assert.assertFalse("t3 contains f", t3.contains("f"));
     }
-    
+
     /**
      * Test BTre.binTree()
      */
@@ -48,19 +50,19 @@ public class BTreeTest {
         BTree t1 = BTree.binTree(new StringByLex());
         BTree t2 = BTree.binTree(new StringByLex());
         BTree t3 = BTree.binTree(new StringByLength());
-        
+
         Assert.assertTrue("repOk, t1", t1.repOK());
         Assert.assertTrue("repOk, t2", t2.repOK());
         Assert.assertTrue("repOk, t3", t3.repOK());
         Assert.assertFalse("No Strings in t1", t1.iterator().hasNext());
         Assert.assertEquals("t1 size = 0", t1.size(), 0);
-        
+
         Assert.assertTrue("emptyLex1 = emptyLex2", t1.equals(t2));
         Assert.assertTrue("emptyLex2 = emptyLex1", t2.equals(t1));
         Assert.assertFalse("emptyLength1 != emptyLex1", t3.equals(t1));
         Assert.assertNotNull("emptyLex1 != null", t1);
     }
-    
+
     /**
      * Test equals()
      */
@@ -71,79 +73,76 @@ public class BTreeTest {
         BTree t2 = BTree.binTree(new StringByLex());
         BTree t3 = BTree.binTree(new StringByLength());
         BTree t4 = BTree.binTree(new StringByLength());
-        
+
         Assert.assertTrue("empty lex1 = empty lex2", t1.equals(t2));
         Assert.assertEquals("empty hash==empty hash", t1.hashCode(),
-            t2.hashCode());
+                t2.hashCode());
         Assert.assertTrue("empty lex2  = empty lex1", t2.equals(t1));
         Assert.assertFalse("empty len != empty lex", t1.equals(t3));
         Assert.assertFalse("empty == \"Hello\"", t1.equals("Hello"));
-        
+
         t1.build(Arrays.asList("a", "bb", "cc"));
         t2.build(Arrays.asList("a", "bb", "cc"));
         t3.build(Arrays.asList("aa", "b", "c"));
-        
+
         Assert.assertTrue("{a,bb,cc}=={a,bb,cc}", t1.equals(t2));
         Assert.assertEquals("{a,bb,cc}hash=={a,bb,cc}hash", t1.hashCode(),
-            t2.hashCode());
+                t2.hashCode());
         Assert.assertTrue("{a,bb,cc}=={a,bb,cc}", t2.equals(t1));
         Assert.assertFalse("t1 != t3", t1.equals(t3));
         Assert.assertFalse("t1 != null", t1.equals(o));
         Assert.assertFalse("t2 != null", t2.equals(o));
         Assert.assertFalse("t3 != null", t3.equals(o));
-        
+
         t1.build(Arrays.asList("a"));
         Assert.assertTrue("{a,bb,cc}.add(a)=={a,bb,cc}", t1.equals(t2));
-        
+
         t4.build(Arrays.asList("aa", "b", "c"));
-        
+
         Assert.assertFalse("t1 != t4", t1.equals(t4));
         Assert.assertFalse("t4 != t1", t4.equals(t1));
     }
-    
+
     /**
      * test
      */
     @Test
     public void testIterator() {
-        BTree t1 = BTree.binTree(new
-            StringByLex());
+        BTree t1 = BTree.binTree(new StringByLex());
         BTree t2 = BTree.binTree(new StringByLex());
-        BTree t3 =
-                BTree.binTree(new StringByLength());
-        
+        BTree t3 = BTree.binTree(new StringByLength());
+
         t1.build(Arrays.asList("a", "bb", "cc"));
-        t2.build(Arrays.asList("a",
-            "bb", "ccd"));
+        t2.build(Arrays.asList("a", "bb", "ccd"));
         t3.build(Arrays.asList("a", "b"));
-        
+
         Iterator<String> i1 = t1.iterator();
-        
+
         Assert.assertTrue("i1.hasNext()", i1.hasNext());
         Assert.assertTrue("i1.next().equals()", i1.next().equals("a"));
         Assert.assertTrue("i1.next = bb", i1.next().equals("bb"));
-        
+
         try {
             t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"));
             Assert.fail("Iterators Concurrent 1: Stopped");
         }
         catch (ConcurrentModificationException e) {
             Assert.assertTrue("Iterators Concurrent 1: Running", e.getMessage()
-                .equals("1 iterators running"));
+                    .equals("1 iterators running"));
         }
-        
+
         Assert.assertTrue("i1.next = cc", i1.next().equals("cc"));
         while (i1.hasNext()) {
             i1.next();
         }
-        
+
         try {
             t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"));
         }
         catch (ConcurrentModificationException e) {
             Assert.fail("Iterators Concurrent 2: Running");
         }
-        
+
         try {
             i1.next();
             Assert.fail("Has Next");
@@ -151,7 +150,7 @@ public class BTreeTest {
         catch (NoSuchElementException e) {
             Assert.assertNotNull("No Such Element", e);
         }
-        
+
         try {
             i1.remove();
         }
@@ -159,7 +158,7 @@ public class BTreeTest {
             Assert.assertNotNull("Operation not supported", e);
         }
     }
-    
+
     /**
      * Test toString()
      */
@@ -168,21 +167,20 @@ public class BTreeTest {
         BTree t1 = BTree.binTree(new StringByLex());
         BTree t2 = BTree.binTree(new StringByLex());
         BTree t3 = BTree.binTree(new StringByLex());
-        
+
         Assert.assertTrue("emptyLex.toString()", t1.toString().equals(""));
         Assert.assertTrue("emptyLength.toString()", t3.toString().equals(""));
-        
+
         t1.build(Arrays.asList("a", "b", "c"));
         t2.build(Arrays.asList("a", "a", "c"), 2);
         t3.build(Arrays.asList("e", "a", "f", "e", "d", "b", "z", "c"), -1);
-        
-        Assert
-            .assertTrue("{a,b,c}.toString()", t1.toString()
-                .equals("a, b, c"));
+
+        Assert.assertTrue("{a,b,c}.toString()", 
+                t1.toString().equals("a, b, c"));
         Assert.assertEquals("t1.size = 3", t1.size(), 3);
         Assert.assertTrue("t2.toString()", t2.toString().equals("a"));
         Assert.assertEquals("t2.size = 1", t2.size(), 1);
         Assert.assertTrue("t3 toString",
-            t3.toString().equals("a, b, c, d, e, f, z"));
+                t3.toString().equals("a, b, c, d, e, f, z"));
     }
 }

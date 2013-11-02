@@ -1,5 +1,7 @@
 /*
- * Name: Nicholas Jones Email: njhazelh@zimbra.ccs.neu.edu Comments: n/a
+ * Name: Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
  */
 
 import java.util.Comparator;
@@ -24,7 +26,7 @@ public class BTree implements Iterable<String> {
     private Comparator<String> comp;
     private RBTree             tree;
     private int                active = 0;
-    
+
     /**
      * This is a static factory method that produces in empty instance of a
      * BTree
@@ -37,7 +39,7 @@ public class BTree implements Iterable<String> {
     public static BTree binTree(Comparator<String> comp) {
         return new BTree(comp);
     }
-    
+
     /**
      * This is a private constructor for BTree that creates an instance of BTree
      * that uses the Comparator<String> comp to organize Strings.
@@ -48,7 +50,7 @@ public class BTree implements Iterable<String> {
         this.comp = comp;
         this.tree = RBTree.binTree(comp);
     }
-    
+
     /**
      * Modifies: this binary search tree by inserting the <code>String</code>s
      * from the given <code>Iterable</code> collection The tree will not have
@@ -68,7 +70,7 @@ public class BTree implements Iterable<String> {
                     + " iterators running");
         }
     }
-    
+
     /**
      * Modifies: this binary search tree by inserting the first numStrings
      * <code>String</code>s from the given <code>Iterable</code> collection The
@@ -77,9 +79,9 @@ public class BTree implements Iterable<String> {
      * 
      * @param in the given <code>Iterable</code> collection
      * @param numStrings number of <code>String</code>s to iterate through and
-     *            add to BTree if numStrings is negative or larger than the
-     *            number of <code>String</code>s in iter then all
-     *            <code>String</code>s in iter should be inserted into the tree
+     *        add to BTree if numStrings is negative or larger than the number
+     *        of <code>String</code>s in iter then all <code>String</code>s in
+     *        iter should be inserted into the tree
      */
     public void build(Iterable<String> in, Integer numStrings) {
         if (numStrings < 0) {
@@ -87,8 +89,8 @@ public class BTree implements Iterable<String> {
         }
         else if (this.active == 0) {
             Iterator<String> iter = in.iterator();
-            
-            for (int i = 0; i < numStrings && iter.hasNext(); i++) {
+
+            for (int i = 0; (i < numStrings) && iter.hasNext(); i++) {
                 this.tree.add(iter.next());
             }
         }
@@ -97,7 +99,7 @@ public class BTree implements Iterable<String> {
                     + " iterators running");
         }
     }
-    
+
     /**
      * Does this BTree contain s?
      * 
@@ -107,7 +109,7 @@ public class BTree implements Iterable<String> {
     public boolean contains(String s) {
         return this.tree.contains(s);
     }
-    
+
     /**
      * Effect: Produces false if o is not an instance of BTree. Produces true if
      * this tree and the given BTree contain the same <code>String</code>s and
@@ -121,10 +123,10 @@ public class BTree implements Iterable<String> {
      */
     @Override
     public boolean equals(Object that) {
-        return that instanceof BTree && ((BTree) that).comp.equals(this.comp)
+        return (that instanceof BTree) && ((BTree) that).comp.equals(this.comp)
                 && this.tree.equals(((BTree) that).tree);
     }
-    
+
     /**
      * If two Objects are equal, they must have the same hashCode
      * 
@@ -134,7 +136,7 @@ public class BTree implements Iterable<String> {
     public int hashCode() {
         return this.tree.hashCode();
     }
-    
+
     /**
      * Get an iterator for this BTree. While iterator active, cannot modify this
      * BTree.
@@ -146,7 +148,7 @@ public class BTree implements Iterable<String> {
     public Iterator<String> iterator() {
         return new BTreeIter();
     }
-    
+
     /**
      * repOk
      * 
@@ -158,10 +160,10 @@ public class BTree implements Iterable<String> {
                 return false;
             }
         }
-        
+
         return this.tree.repOK();
     }
-    
+
     /**
      * How many Strings are in this BTree?
      * 
@@ -170,7 +172,7 @@ public class BTree implements Iterable<String> {
     public int size() {
         return this.tree.size();
     }
-    
+
     /**
      * Effect: Produces a <code>String</code> that consists of all
      * <code>String</code>s in this tree separated by comma and a space,
@@ -184,7 +186,7 @@ public class BTree implements Iterable<String> {
     public String toString() {
         return this.tree.toString();
     }
-    
+
     /**
      * BTreeIter is an Iterator that moves through the BTree in the order that
      * the Strings were placed by the Comparator of the BTree they point to.
@@ -195,7 +197,7 @@ public class BTree implements Iterable<String> {
     protected class BTreeIter implements Iterator<String> {
         private boolean          isDone;
         private Iterator<String> iter;
-        
+
         /**
          * CONSTRUCTOR
          * 
@@ -210,7 +212,7 @@ public class BTree implements Iterable<String> {
                 this.isDone = true;
             }
         }
-        
+
         /**
          * Make sure that this Iterator is cleaned up before it is trashed, so
          * that the BTree can add more Strings.
@@ -220,7 +222,7 @@ public class BTree implements Iterable<String> {
             this.finish();
             super.finalize();
         }
-        
+
         /**
          * Free up the BTree this Iterator points to, so that new Strings can be
          * added to it.
@@ -231,7 +233,7 @@ public class BTree implements Iterable<String> {
                 BTree.this.active--;
             }
         }
-        
+
         /**
          * Does this Iterator have another String?
          * 
@@ -241,7 +243,7 @@ public class BTree implements Iterable<String> {
         public boolean hasNext() {
             return this.iter.hasNext();
         }
-        
+
         /**
          * Get the next String in the iteration.
          * 
@@ -261,7 +263,7 @@ public class BTree implements Iterable<String> {
                         + BTree.this.tree.toString());
             }
         }
-        
+
         /**
          * Unsupported.
          * 
