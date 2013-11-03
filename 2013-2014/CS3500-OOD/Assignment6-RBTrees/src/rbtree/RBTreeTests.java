@@ -61,10 +61,28 @@ public class RBTreeTests {
             }
         };
 
+        Comparator<String> num = new Comparator<String>() {
+            /**
+             * Compares s1 and s2 for number comparison
+             * 
+             * @param s1 String 1
+             * @param s2 String 2
+             * @return < 0 if s1 < s2, 0 if s1 == s2, > 0 if s1 > s2
+             */
+            @Override
+            public int compare(String s1, String s2) {
+                return (int) Math.round(Double.parseDouble(s1)
+                        - Double.parseDouble(s2));
+            }
+        };
+
         Node n1 = new Node(Color.BLACK, lex, Leaf.INSTANCE, "f", Leaf.INSTANCE);
         Node n2 = new Node(Color.BLACK, length, Leaf.INSTANCE, "a",
                 Leaf.INSTANCE);
         Node n3 = new Node(Color.BLACK, lex, Leaf.INSTANCE, "e", Leaf.INSTANCE);
+        Node n4 = new Node(Color.BLACK, num, Leaf.INSTANCE, "0", Leaf.INSTANCE);
+        Node n5 = new Node(Color.BLACK, num, Leaf.INSTANCE, "0", Leaf.INSTANCE);
+
         Object o = null;
 
         for (String s : Arrays.asList("e", "a", "f", "e", "d", "b", "z", "c")) {
@@ -86,6 +104,22 @@ public class RBTreeTests {
             Assert.assertTrue("n3 repOK", n3.repOK());
         }
 
+        for (Integer i = 1; i <= 20000; i++) {
+            n4.add(i.toString());
+            n4 = n4.getRoot();
+            if (!n4.contains(i.toString())) {
+                Assert.fail("added but doesn't contain" + i);
+            }
+        }
+        
+        for (Integer i = 1; i <= 2000; i++) {
+            String s = (new Double(Math.floor(Math.random() * 20000)))
+                    .toString();
+            n5.add(s);
+            n5 = n5.getRoot();
+        }
+
+        Assert.assertTrue("n4 size", n4.size() == 20001);
         Assert.assertTrue("n1 repOK", n1.repOK());
         Assert.assertTrue("n2 repOK", n2.repOK());
         Assert.assertTrue("n1 balanced", n1.toStructString().equals(
