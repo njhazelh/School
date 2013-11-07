@@ -25,18 +25,19 @@ import rbtree.RBTreeWrapper;
  * @param <T> The type of data stored in the BTree.
  */
 public class BTree<T> implements Iterable<T> {
-    private Comparator<T> comp;
-    private RBTreeWrapper<T>     tree;
-    private int           active = 0;
+    private Comparator<T>    comp;
+    private RBTreeWrapper<T> tree;
+    private int              active = 0;
 
     /**
      * This is a static factory method that produces in empty instance of a
      * BTree
      * 
      * @param comp The comparator to use to organize Strings.
+     * @param <R> The type of BTree this will create and the type of Comparator
+     *        that this takes.
      * @return An empty BTree that uses that comparator comp to organize Strings
      *         into accending order.
-     * 
      */
     public static <R> BTree<R> binTree(Comparator<R> comp) {
         return new BTree<R>(comp);
@@ -80,7 +81,7 @@ public class BTree<T> implements Iterable<T> {
      * that is already in the tree, it will not be added.
      * 
      * @param in the given <code>Iterable</code> collection
-     * @param numStrings number of <code>String</code>s to iterate through and
+     * @param numItems number of <code>String</code>s to iterate through and
      *        add to BTree if numStrings is negative or larger than the number
      *        of <code>String</code>s in iter then all <code>String</code>s in
      *        iter should be inserted into the tree
@@ -105,7 +106,7 @@ public class BTree<T> implements Iterable<T> {
     /**
      * Does this BTree contain s?
      * 
-     * @param s String to check for.
+     * @param t T to check for.
      * @return true if this tree contains the String s.
      */
     public boolean contains(T t) {
@@ -175,11 +176,12 @@ public class BTree<T> implements Iterable<T> {
     public int size() {
         return this.tree.size();
     }
-    
+
     /**
      * Apply the given visitor to this tree.
      * 
      * @param visitor visitor to use.
+     * @param <R> The output of the visitor.
      * @return the result of the visitor operations.
      */
     public <R> R accept(RBTreeVisitor<T, R> visitor) {
@@ -198,6 +200,15 @@ public class BTree<T> implements Iterable<T> {
     @Override
     public String toString() {
         return this.tree.toString();
+    }
+    
+    /**
+     * Generate a String that represents the structure and content of this
+     * BTree.
+     * @return A Structured String.
+     */
+    public String toStructString() {
+        return this.tree.toStructString();
     }
 
     /**

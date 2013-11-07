@@ -16,6 +16,7 @@ import java.util.Iterator;
  * 
  * @author Nicholas Jones
  * @version Oct 30, 2013
+ * @param <T> The type of data contained.
  */
 public class RBTreeWrapper<T> implements Iterable<T> {
     private RBTree<T>     tree;
@@ -26,6 +27,7 @@ public class RBTreeWrapper<T> implements Iterable<T> {
      * organize Ts.
      * 
      * @param comp The Comparator<R> to use to organize Rs.
+     * @param <R> The type of data in this RBTreeWrapper.
      * @return an empty RBTreeWrapper.
      */
     public static <R> RBTreeWrapper<R> binTree(Comparator<R> comp) {
@@ -142,11 +144,22 @@ public class RBTreeWrapper<T> implements Iterable<T> {
     public String toString() {
         return this.tree.toString();
     }
+    
+    /**
+     * Generate a String that represents the structure and content of this
+     * BTree.
+     * @return A Structured String.
+     */
+    public String toStructString() {
+        return this.tree.toStructString("");
+    }
+
 
     /**
      * Apply the given visitor to this tree.
      * 
      * @param visitor visitor to use.
+     * @param <R> The return type of the visitor.
      * @return the result of the visitor operations.
      */
     public <R> R accept(RBTreeVisitor<T, R> visitor) {

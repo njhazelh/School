@@ -46,6 +46,6 @@ public class Height<T> implements RBTreeVisitor<T, Integer> {
     @Override
     public Integer visitNode(Comparator<T> comp, String color, T data,
             RBTree<T> left, RBTree<T> right) {
-        return Math.max(left.accept(this), right.accept(this));
+        return Math.max(left.accept(this), right.accept(this)) + 1;
     }
 }

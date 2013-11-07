@@ -6,8 +6,19 @@
 
 import java.util.Comparator;
 
+/**
+ * IntByVal orders Integers according to their value. (0 < 1 < 2...)
+ * 
+ * @author Nick Jones
+ * @version 11/6/2013
+ */
 public class IntByVal implements Comparator<Integer> {
 
+    /**
+     * Is the representation good for this class?
+     * 
+     * @return true if rep is OK, else false.
+     */
     public boolean repOK() {
         return this.compare(new Integer(2), new Integer(3)) < 0 &&
                this.compare(new Integer(3), new Integer(3)) == 0 &&

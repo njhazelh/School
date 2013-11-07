@@ -19,13 +19,16 @@ import java.util.Iterator;
  * 
  * @author Nicholas Jones
  * @version Oct 30, 2013
+ * @param <T> The type of data associated with this tree. Although Leaves do not
+ * contain data. They are subleaves for Nodes that do.
  */
 class Leaf<T> implements RBTree<T> {
-    Comparator<T> comp;
+    private Comparator<T> comp;
     private final Color color = Color.BLACK;
 
     /**
      * CONSTRUCTOR
+     * @param comp The comparator for this Leaf.
      */
     public Leaf(Comparator<T> comp) {
         this.comp = comp;
@@ -150,7 +153,8 @@ class Leaf<T> implements RBTree<T> {
     /**
      * Generate a String that sorta describes the Structure
      * 
-     * @return the String
+     * @param indent The indentation. Starts with "". Adds "\t" each Node.
+     * @return The structured String representation.
      */
     @Override
     public String toStructString(String indent) {
@@ -161,6 +165,7 @@ class Leaf<T> implements RBTree<T> {
      * Apply the given visitor to this Leaf.
      * 
      * @param visitor visitor to use.
+     * @param <R> The return type for the visitor.
      * @return the result of the visitor operations.
      */
     @Override

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 /**
  * @author Nicholas Jones
  * @version Oct 31, 2013
+ * @param <T> The type of data contained in the IBTree.
  */
 interface IBTree<T> extends Iterable<T> {
     /**
@@ -71,8 +72,8 @@ interface IBTree<T> extends Iterable<T> {
     /**
      * Generate a String that represents the structure of this IBTree.
      * 
-     * @param the indentation for each level: "\t\t...". Start at "".
-     * @return the string
+     * @param indent the indentation for each level: "\t\t...". Start at "".
+     * @return The BTree as a structured String.
      */
     public String toStructString(String indent);
 
@@ -87,6 +88,7 @@ interface IBTree<T> extends Iterable<T> {
      * Apply the given visitor to this tree.
      * 
      * @param visitor visitor to use.
+     * @param <R> The return type of the visitor.
      * @return the result of the visitor operations.
      */
     public <R> R accept(RBTreeVisitor<T, R> visitor);
@@ -119,6 +121,7 @@ interface Coloured {
  * 
  * @author Nicholas Jones
  * @version Oct 31, 2013
+ * @param <T> The type of data in the RBTree.
  */
 public interface RBTree<T> extends IBTree<T>, Coloured {
 }

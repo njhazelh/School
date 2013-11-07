@@ -13,6 +13,7 @@ import java.util.Iterator;
 /**
  * @author Nicholas Jones
  * @version Oct 31, 2013
+ * @param <T> The type of data in this Node.
  */
 class Node<T> implements RBTree<T> {
     private Comparator<T> comp;
@@ -375,6 +376,8 @@ class Node<T> implements RBTree<T> {
     /**
      * Convert this to a String that represents the structure of this Node.
      * 
+     * @param indent The indentation for this level. Start at "" and add "\t" at
+     *        each Node.
      * @return a String (T RED|BLACK LEFT.structString RIGHT.structString)
      */
     @Override
@@ -387,6 +390,7 @@ class Node<T> implements RBTree<T> {
      * Apply the given visitor to this tree.
      * 
      * @param visitor visitor to use.
+     * @param <R> The return type of the visitor.
      * @return the result of the visitor operations.
      */
     @Override
