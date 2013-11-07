@@ -202,14 +202,14 @@ public class BTree<T> implements Iterable<T> {
         return this.tree.toString();
     }
     
-    /**
-     * Generate a String that represents the structure and content of this
-     * BTree.
-     * @return A Structured String.
-     */
-    public String toStructString() {
-        return this.tree.toStructString();
-    }
+//    /**
+//     * Generate a String that represents the structure and content of this
+//     * BTree.
+//     * @return A Structured String.
+//     */
+//    public String toStructString() {
+//        return this.tree.toStructString();
+//    }
 
     /**
      * BTreeIter is an Iterator that moves through the BTree in the order that
@@ -227,7 +227,7 @@ public class BTree<T> implements Iterable<T> {
          * 
          */
         public BTreeIter() {
-            this.iter = BTree.this.tree.toArrayList().iterator();
+            this.iter = BTree.this.tree.iterator();
             if (this.iter.hasNext()) {
                 BTree.this.active++;
                 this.isDone = false;

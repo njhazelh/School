@@ -33,7 +33,7 @@ public class BTreeTest {
         t1.build(Arrays.asList("a", "bb", "cc"));
         t2.build(Arrays.asList("bb", "a", "ccd"));
         t3.build(Arrays.asList("a", "b"));
-        t4.build(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8));
+        t4.build(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8), 20);
 
         Assert.assertTrue("t1 contains a", t1.contains("a"));
         Assert.assertFalse("t1 contains f", t1.contains("f"));
@@ -58,6 +58,8 @@ public class BTreeTest {
         BTree<String> t2 = BTree.binTree(new StringByLex());
         BTree<String> t3 = BTree.binTree(new StringByLength());
         BTree<Integer> t4 = BTree.binTree(new IntByVal());
+        
+        t4.build(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8));
 
         Assert.assertTrue("repOk, t1", t1.repOK());
         Assert.assertTrue("repOk, t2", t2.repOK());
@@ -148,8 +150,8 @@ public class BTreeTest {
         Assert.assertTrue("i1.next().equals()", i1.next().equals("a"));
         Assert.assertTrue("i1.next = bb", i1.next().equals("bb"));
 
-        try { //
-            t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"));
+        try { // Test t1 cannot ConcurrentModify
+            t1.build(Arrays.asList("asdf", "fg", "a", "aa", "aaa"), 10);
             Assert.fail("Iterators Concurrent 1: Stopped");
         }
         catch (ConcurrentModificationException e) {

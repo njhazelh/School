@@ -6,7 +6,6 @@
 
 package rbtree;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -127,15 +126,6 @@ public class RBTreeWrapper<T> implements Iterable<T> {
     }
 
     /**
-     * Make an array of all this Ts of this RBTreeWrapper in order
-     * 
-     * @return an ordered ArrayList<T>
-     */
-    public ArrayList<T> toArrayList() {
-        return this.tree.toArrayList();
-    }
-
-    /**
      * Get a string representing this RBTreeWrapper
      * 
      * @return "s1, s2, s3, ..."
@@ -144,16 +134,15 @@ public class RBTreeWrapper<T> implements Iterable<T> {
     public String toString() {
         return this.tree.toString();
     }
-    
-    /**
-     * Generate a String that represents the structure and content of this
-     * BTree.
-     * @return A Structured String.
-     */
-    public String toStructString() {
-        return this.tree.toStructString("");
-    }
 
+    // /**
+    // * Generate a String that represents the structure and content of this
+    // * BTree.
+    // * @return A Structured String.
+    // */
+    // public String toStructString() {
+    // return this.tree.toStructString("");
+    // }
 
     /**
      * Apply the given visitor to this tree.

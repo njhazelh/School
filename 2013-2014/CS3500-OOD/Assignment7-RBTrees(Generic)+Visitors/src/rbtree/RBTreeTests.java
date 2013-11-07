@@ -72,6 +72,15 @@ public class RBTreeTests {
         Assert.assertTrue("Leaf<String> = Leaf<String>", l1.equals(l3));
         Assert.assertFalse("Leaf<String> != null", l1.equals(o));
         Assert.assertTrue("Leaf<String> = Leaf<Integer>", l1.equals(l2));
+        
+        try {
+            l1.setColor(Color.RED);
+            Assert.fail("was able to set leaf color");
+        }
+        catch (Exception e) {
+            Assert.assertTrue("Did not set color",
+                    e instanceof UnsupportedOperationException);
+        }
     }
 
     /**
@@ -131,7 +140,7 @@ public class RBTreeTests {
             n5 = n5.getRoot();
         }
         
-        Assert.assertTrue("n4 size", n4.size() == 20001);
+        Assert.assertEquals("n4 size", n4.size(), 20001);
         Assert.assertTrue("n1 repOK", n1.repOK());
         Assert.assertTrue("n2 repOK", n2.repOK());
         Assert.assertTrue("n1 balanced", n1.toStructString("").equals(
@@ -144,8 +153,8 @@ public class RBTreeTests {
         Assert.assertTrue("n3 balanced", n3.toStructString("").equals(
                 "\n\t\tBLACK h\n\tRED g\n\t\tBLACK f\nBLACK e\n\t\tBLACK d\n\t"
                 + "RED c\n\t\tBLACK b\n\t\t\tRED a\n"));
-        Assert.assertTrue("n1 root BLACK", n1.getColor() == Color.BLACK);
-        Assert.assertTrue("n2 root BLACK", n2.getColor() == Color.BLACK);
+        Assert.assertEquals("n1 root BLACK", n1.getColor(), Color.BLACK);
+        Assert.assertEquals("n2 root BLACK", n2.getColor(), Color.BLACK);
         Assert.assertFalse("n1 != n2", n1.equals(n2));
         Assert.assertFalse("n1 != null", n1.equals(o));
         Assert.assertFalse("n2 != null", n2.equals(o));
