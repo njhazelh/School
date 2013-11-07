@@ -7,79 +7,35 @@
 package rbtree;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 
 /**
- * RBTree is a mutable representation of Red Black Trees, a form of binary
- * search trees with good worst case efficiency.
- * 
  * @author Nicholas Jones
- * @version Oct 30, 2013
+ * @version Oct 31, 2013
  */
-public class RBTree<T> implements Iterable<T> {
-    private IRBTree<T>    tree;
-    private Comparator<T> comp;
-
+interface IBTree<T> extends Iterable<T> {
     /**
-     * Factory: Create an empty RBTree that uses the given Comparator to
-     * organize Ts.
-     * 
-     * @param comp The Comparator<R> to use to organize Rs.
-     * @return an empty RBTree.
-     */
-    public static <R> RBTree<R> binTree(Comparator<R> comp) {
-        return new RBTree<R>(comp);
-    }
-
-    /**
-     * This is the private RBTree Constructor. A factory interface is provided
-     * from creating instances of RBTree.
-     * 
-     * @param comp The comparator this tree will use to organize Ts.
-     */
-    private RBTree(Comparator<T> comp) {
-        this.comp = comp;
-        this.tree = new Leaf<T>();
-    }
-
-    /**
-     * Try to add a T to the RBTree.
+     * Try to add a T to the IBTree.
      * 
      * @param s T to add
      */
-    public void add(T s) {
-        try { // ASSUME ADDING TO NODE
-            this.tree.add(s);
-            this.tree = ((Node<T>) this.tree).getRoot();
-        }
-        catch (UnsupportedOperationException e) { // SWAP NODE WITH LEAF
-            this.tree = new Node<T>(Color.BLACK, this.comp, this.tree, s,
-                    this.tree);
-        }
-    }
+    public void add(T s);
 
     /**
-     * Does this RBTree contain s?
+     * Does this IBTree contain s?
      * 
      * @param s The T to look for?
      * @return true if present.
      */
-    public boolean contains(T s) {
-        return this.tree.contains(s);
-    }
+    public boolean contains(T s);
 
     /**
-     * Is that a RBTree with the same Ts and Comparator as that?
+     * Is that an IBTree with the same Ts and Comparator as this?
      * 
      * @param that The Object to compare this to.
      * @return true if equal.
      */
     @Override
-    public boolean equals(Object that) {
-        return (that instanceof RBTree<?>)
-                && ((RBTree<?>) that).tree.equals(this.tree);
-    }
+    public boolean equals(Object that);
 
     /**
      * Get an int such that the hashCode/equals relationship holds true.
@@ -88,68 +44,81 @@ public class RBTree<T> implements Iterable<T> {
      *         hashCode.
      */
     @Override
-    public int hashCode() {
-        return this.tree.hashCode();
-    }
+    public int hashCode();
 
     /**
-     * Get an iterator that iterates from the lowest values to the highest
-     * values (according to the comparator.)
+     * How many Ts are in this IBTree
      * 
-     * @return An iterator for this RBTree
+     * @return # of Ts in IBTree
      */
-    @Override
-    public Iterator<T> iterator() {
-        return this.tree.iterator();
-    }
+    public int size();
 
     /**
-     * repOk
-     * 
-     * @return Is the representation for this RBTree valid?
-     */
-    public boolean repOK() {
-        return (this.tree.getColor() == Color.BLACK)
-                && (this.tree.size() == this.size())
-                && this.tree.toString().equals(this.toString())
-                && this.tree.repOK();
-    }
-
-    /**
-     * How many Ts are in this RBTree
-     * 
-     * @return # of Ts in RBTree
-     */
-    public int size() {
-        return this.tree.size();
-    }
-
-    /**
-     * Make an array of all this Ts of this RBTree in order
+     * Make an array of all this Ts of this IBTree in order
      * 
      * @return an ordered ArrayList<T>
      */
-    public ArrayList<T> toArrayList() {
-        return this.tree.toArrayList();
-    }
+    public ArrayList<T> toArrayList();
 
     /**
-     * Get a string representing this RBTree
+     * Get a String representing this IBTree
      * 
      * @return "s1, s2, s3, ..."
      */
     @Override
-    public String toString() {
-        return this.tree.toString();
-    }
+    public String toString();
 
+    /**
+     * Generate a String that represents the structure of this IBTree.
+     * 
+     * @param the indentation for each level: "\t\t...". Start at "".
+     * @return the string
+     */
+    public String toStructString(String indent);
+
+    /**
+     * Is the representation of this IBTree valid?
+     * 
+     * @return true if valid, else false.
+     */
+    public boolean repOK();
+    
     /**
      * Apply the given visitor to this tree.
      * 
      * @param visitor visitor to use.
      * @return the result of the visitor operations.
      */
-    public <R> R accept(RBTreeVisitor<T, R> visitor) {
-        return this.tree.accept(visitor);
-    }
+    public <R> R accept(RBTreeVisitor<T, R> visitor);
+}
+
+/**
+ * Coloured because England!
+ * 
+ * @author Nicholas Jones
+ * @version Oct 31, 2013
+ */
+interface Coloured {
+    /**
+     * What is the color of this thing?
+     * 
+     * @return the color of this.
+     */
+    public Color getColor();
+
+    /**
+     * Set the Color of this thing
+     * 
+     * @param c the new color
+     */
+    public void setColor(Color c);
+}
+
+/**
+ * This is a union of the two interfaces, Coloured and IBTree.
+ * 
+ * @author Nicholas Jones
+ * @version Oct 31, 2013
+ */
+public interface RBTree<T> extends IBTree<T>, Coloured {
 }

@@ -14,10 +14,10 @@ import java.util.Iterator;
  * @author Nicholas Jones
  * @version Oct 31, 2013
  */
-class Node<T> implements IRBTree<T> {
+class Node<T> implements RBTree<T> {
     private Comparator<T> comp;
-    private IRBTree<T>    left;
-    private IRBTree<T>    right;
+    private RBTree<T>     left;
+    private RBTree<T>     right;
     private T             val;
     private Color         color;
     private Node<T>       parent; // Null when highest Node<T> (root).
@@ -31,8 +31,8 @@ class Node<T> implements IRBTree<T> {
      * @param val The T at this Node.
      * @param right The right side of this tree. Ts > this.value.
      */
-    public Node(Color color, Comparator<T> comp, IRBTree<T> left, T val,
-            IRBTree<T> right) {
+    public Node(Color color, Comparator<T> comp, RBTree<T> left, T val,
+            RBTree<T> right) {
         this.color = color;
         this.comp = comp;
         this.left = left;
@@ -51,7 +51,7 @@ class Node<T> implements IRBTree<T> {
      * @param right The right side of this tree. Ts > this.value.
      */
     public Node(Color color, Comparator<T> comp, Node<T> parent,
-            IRBTree<T> left, T val, IRBTree<T> right) {
+            RBTree<T> left, T val, RBTree<T> right) {
         this.color = color;
         this.comp = comp;
         this.parent = parent;
@@ -120,7 +120,7 @@ class Node<T> implements IRBTree<T> {
         } // HAS PARENT && THIS.PARENT.COLOR == RED => HAS GRANDPARENT
 
         else {
-            IRBTree<T> uncle = node.parent.getSibling();
+            RBTree<T> uncle = node.parent.getSibling();
             if (uncle.getColor() == Color.RED) {
                 node.parent.setColor(Color.BLACK);
                 uncle.setColor(Color.BLACK);
@@ -213,7 +213,7 @@ class Node<T> implements IRBTree<T> {
      * 
      * @return The other child of this Node's parent.
      */
-    protected IRBTree<T> getSibling() {
+    protected RBTree<T> getSibling() {
         if (this.equals(this.parent.left)) {
             return this.parent.right;
         }
@@ -236,7 +236,7 @@ class Node<T> implements IRBTree<T> {
      * Get an iterator that iterates from the lowest values to the highest
      * values (according to the comparator.)
      * 
-     * @return An iterator for this RBTree
+     * @return An iterator for this RBTreeWrapper
      */
     @Override
     public Iterator<T> iterator() {
@@ -275,7 +275,7 @@ class Node<T> implements IRBTree<T> {
      */
     protected void rotateLeft() {
         Node<T> oldParent = (this.parent);
-        IRBTree<T> oldLeft = this.left;
+        RBTree<T> oldLeft = this.left;
         Node<T> oldGP = this.parent.parent;
 
         if ((oldGP instanceof Node<?>) && oldGP.left.equals(oldParent)) {
@@ -301,7 +301,7 @@ class Node<T> implements IRBTree<T> {
      */
     protected void rotateRight() {
         Node<T> oldParent = (this.parent);
-        IRBTree<T> oldRight = this.right;
+        RBTree<T> oldRight = this.right;
         Node<T> oldGP = this.parent.parent;
 
         if ((oldGP instanceof Node) && oldGP.left.equals(oldParent)) {
@@ -338,14 +338,7 @@ class Node<T> implements IRBTree<T> {
      */
     @Override
     public int size() {
-        int size = 0;
-        Iterator<T> it = this.iterator();
-
-        while (it.hasNext()) {
-            size++;
-        }
-
-        return size;
+        return 1 + this.left.size() + this.right.size();
     }
 
     /**
@@ -396,7 +389,9 @@ class Node<T> implements IRBTree<T> {
      * @param visitor visitor to use.
      * @return the result of the visitor operations.
      */
+    @Override
     public <R> R accept(RBTreeVisitor<T, R> visitor) {
-        return visitor.visitNode(this.comp, this.color.toString(), this.left, this.val, this.right);
+        return visitor.visitNode(this.comp, this.color.toString(), this.val,
+                this.left, this.right);
     }
 }

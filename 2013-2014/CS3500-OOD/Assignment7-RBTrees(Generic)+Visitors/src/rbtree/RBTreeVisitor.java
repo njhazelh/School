@@ -1,3 +1,5 @@
+package rbtree;
+
 /*
  * Name: Nicholas Jones
  * Email: njhazelh@zimbra.ccs.neu.edu
@@ -5,8 +7,6 @@
  */
 
 import java.util.Comparator;
-
-import rbtree.RBTree;
 
 /**
  * A visitor for RBTree

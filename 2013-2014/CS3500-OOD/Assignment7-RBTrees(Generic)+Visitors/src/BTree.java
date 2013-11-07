@@ -9,7 +9,8 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import rbtree.RBTree;
+import rbtree.RBTreeVisitor;
+import rbtree.RBTreeWrapper;
 
 /**
  * BTree is an implementation of BinaryTrees of Strings using Red/Black trees,
@@ -25,7 +26,7 @@ import rbtree.RBTree;
  */
 public class BTree<T> implements Iterable<T> {
     private Comparator<T> comp;
-    private RBTree<T>     tree;
+    private RBTreeWrapper<T>     tree;
     private int           active = 0;
 
     /**
@@ -49,7 +50,7 @@ public class BTree<T> implements Iterable<T> {
      */
     private BTree(Comparator<T> comp) {
         this.comp = comp;
-        this.tree = RBTree.binTree(comp);
+        this.tree = RBTreeWrapper.binTree(comp);
     }
 
     /**

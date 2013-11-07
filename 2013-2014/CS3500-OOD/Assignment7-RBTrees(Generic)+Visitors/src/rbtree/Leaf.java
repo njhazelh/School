@@ -7,6 +7,7 @@
 package rbtree;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -19,12 +20,15 @@ import java.util.Iterator;
  * @author Nicholas Jones
  * @version Oct 30, 2013
  */
-class Leaf<T> implements IRBTree<T> {
+class Leaf<T> implements RBTree<T> {
+    Comparator<T> comp;
+    private final Color color = Color.BLACK;
 
     /**
      * CONSTRUCTOR
      */
-    public Leaf() {
+    public Leaf(Comparator<T> comp) {
+        this.comp = comp;
     }
 
     /**
@@ -63,11 +67,11 @@ class Leaf<T> implements IRBTree<T> {
     /**
      * All Leaves are BLACK.
      * 
-     * @return RBTree.Color.BLACK
+     * @return Color.BLACK
      */
     @Override
     public Color getColor() {
-        return Color.BLACK;
+        return this.color;
     }
 
     /**
@@ -84,7 +88,7 @@ class Leaf<T> implements IRBTree<T> {
     /**
      * Get an iterator that has nothing to iterate through.
      * 
-     * @return An iterator for this RBTree
+     * @return An iterator for this RBTreeWrapper
      */
     @Override
     public Iterator<T> iterator() {
@@ -151,5 +155,16 @@ class Leaf<T> implements IRBTree<T> {
     @Override
     public String toStructString(String indent) {
         return "\n";
+    }
+
+    /**
+     * Apply the given visitor to this Leaf.
+     * 
+     * @param visitor visitor to use.
+     * @return the result of the visitor operations.
+     */
+    @Override
+    public <R> R accept(RBTreeVisitor<T, R> visitor) {
+        return visitor.visitEmpty(this.comp, this.getColor().toString());
     }
 }
