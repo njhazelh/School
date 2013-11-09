@@ -1,0 +1,14 @@
+README
+------
+
+run1, run2, run3, run4 in Makefile are the 4 different tests given for the assignment.
+
+The default make command will run all 4 tests. It's a lot of text.
+
+The test addresses given in the same block of text is an array at the top of my code called test_set.
+
+I am not sure what else could be meant by include the 4 tests.  You can run my code to get the output for yourself.
+
+Thanks,
+
+-- Nicholas Jones

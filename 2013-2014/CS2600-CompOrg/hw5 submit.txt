@@ -1,0 +1,8 @@
+If your file is successfully submitted, you will see
+  a confirmation message at the end of this command.
+
+Your file, /home/njhazelh/Documents/hw5.tar.gz, has been successfully submitted
+  as file:  /net/course/cs2600gc/hw5.handin/njhazelh-hw5.tar.gz.2715020669
+
+If you change your mind, you can delete the file by doing:
+  rm /net/course/cs2600gc/hw5.handin/njhazelh-hw5.tar.gz.2715020669
