@@ -15,7 +15,7 @@
 // CacheLine represents a single line in a cache.
 //   valid: 1 if set correctly or 0 if not.
 //   tag: the first n bits from the left of an address
-//   *next: The next line in the cache.
+//   *next: Used to divide lines into linked lists based on whether they are used or not.
  typedef struct cacheLine {
   int valid;
   int tag;
@@ -23,13 +23,13 @@
 } CacheLine;
 
 // Cache represents an entire cache.
-//   totalBytes:
-//   numSets:
-//   linesPerSet:
-//   bytesPerLine:
-//   *lines:
-//   **used:
-//   **open
+//   totalBytes: Total size of the case = numSets * linesPerSet
+//   numSets: How many sets of CacheLines are there?
+//   linesPerSet: How many lines are in each set
+//   bytesPerLine: How many bytes of data are in the block of each line?
+//   *lines: An array to all the CacheLines
+//   **used: An array to pointers of the most recently used CacheLine of each set.
+//   **open: An array to pointers of the next free CacheLine for each set.
 typedef struct {
   int totalBytes;
   int numSets;
@@ -84,10 +84,15 @@ Cache cache;
 // FUNCTIONS
 // ============================================================================
 
-/* Converts an integer address into a struct with each part
+/* Address interpretAddress(int address)
+ * 
+ * Converts an integer address into a struct with each part
  * of the address broken apart.
  *
- * numSets and bytesPerLine cannot be 0.
+ * addr: address to convert to a struct.
+ * 
+ * return : An Address where each value is set according to the size of the
+ *          cache.
  */
  Address interpretAddress(int address) {
   Address addr;
@@ -101,8 +106,15 @@ Cache cache;
   return addr;
 }
 
-// Only call when cache.open[set] is NULL and cache.open[set] != NULL
-//   set: The set to evict from.
+/* void evictCacheLine(int set)
+ * 
+ * Only call when cache.open[set] is NULL and cache.used[set] != NULL
+ *
+ * set: The set to evict from.
+ *
+ * Effect: Takes last member of used linked list and moves to first of open, setting 
+ *         valid to false and next values accordingly.
+ */
 void evictCacheLine(int set) {
   CacheLine *line = cache.used[set];
 
@@ -142,6 +154,15 @@ CacheLine* getFreeCacheLine(int set) {
   return cache.used[set]; // Return a pointer to the cacheLine we took from the free list
 }
 
+/* bool hitOrMiss(Address addr)
+ *
+ * Is the given address in the cache?
+ *
+ * addr: The address to search for.
+ *
+ * return: true if in cache, else false
+ * effect: if not in cache, adds to cache, possibly evicting old lines with a FIFO policy
+ */
 bool hitOrMiss(Address addr) {
   int isHit = false;
   int startRow = cache.linesPerSet * addr.set;
@@ -167,7 +188,8 @@ bool hitOrMiss(Address addr) {
   return isHit; // false
 }
 
-/*
+/* Cache interpCmdArgs(char **argv)
+ *
  * Convert command line arguments into a cache
  * args in order: totalBytes, linesPerSet, bytesPerLine
  */
@@ -181,11 +203,8 @@ bool hitOrMiss(Address addr) {
   temp.bytesPerLine = atoi(argv[2]);
   temp.numSets = temp.totalBytes / temp.bytesPerLine / temp.linesPerSet;
 
-  CacheLine tempLines[temp.numSets * temp.linesPerSet];
   temp.lines = (CacheLine *) malloc(sizeof(CacheLine) * temp.numSets * temp.linesPerSet);
-  CacheLine *tempUsed[temp.numSets];
   temp.used = (CacheLine **) malloc(sizeof(CacheLine*) * temp.numSets);
-  CacheLine *tempOpen[temp.numSets];
   temp.open = (CacheLine **) malloc(sizeof(CacheLine*) * temp.numSets);
 
   for (set = 0; set < temp.numSets; set++) {
