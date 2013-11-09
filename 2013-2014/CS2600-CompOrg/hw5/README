@@ -7,7 +7,7 @@ The default make command will run all 4 tests. It's a lot of text.
 
 The test addresses given in the same block of text is an array at the top of my code called test_set.
 
-I am not sure what else could be meant by include the 4 tests.  You can run my code to get the output for yourself.
+The results of the tests are in test1.txt - test4.txt.
 
 Thanks,
 

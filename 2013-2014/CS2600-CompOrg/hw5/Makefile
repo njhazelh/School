@@ -19,6 +19,12 @@ run3:
 run4:
 	./cache 64 8 8
 
+output: compile
+	./cache 128 1 8 > test1.txt
+	./cache 64 2 8 > test2.txt
+	./cache 128 1 16 > test3.txt
+	./cache 64 8 8 > test4.txt
+
 compile:
 	gcc -g -o $(OUTPUT) $(FILE)
 
