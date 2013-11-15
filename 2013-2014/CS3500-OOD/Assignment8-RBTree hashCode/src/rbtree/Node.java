@@ -28,25 +28,7 @@ class Node<T> implements RBTree<T> {
      * 
      * @param color The color of this Node
      * @param comp The comparator of this Node.
-     * @param left The left side of this tree. Ts < this.value
-     * @param val The T at this Node.
-     * @param right The right side of this tree. Ts > this.value.
-     */
-    public Node(Color color, Comparator<T> comp, RBTree<T> left, T val,
-            RBTree<T> right) {
-        this.color = color;
-        this.comp = comp;
-        this.left = left;
-        this.val = val;
-        this.right = right;
-    }
-
-    /**
-     * Create a new Node<T> with the given values.
-     * 
-     * @param color The color of this Node
-     * @param comp The comparator of this Node.
-     * @param parent The parent of this Node.
+     * @param parent The parent of this Node, null if root Node.
      * @param left The left side of this tree. Ts < this.value
      * @param val The T at this Node.
      * @param right The right side of this tree. Ts > this.value.
@@ -79,23 +61,23 @@ class Node<T> implements RBTree<T> {
         int compResult = this.comp.compare(t, this.val);
 
         if (compResult < 0) { // ADD TO LEFT
-            try { // ASSUME ADDING TO NODE
-                this.left.add(t);
-            }
-            catch (UnsupportedOperationException e) { // ADD TO LEAF
+            if (this.left.isLeaf()) {
                 this.left = new Node<T>(Color.RED, this.comp, this, this.left,
                         t, this.left);
                 ((Node<T>) this.left).balance();
             }
+            else {
+                this.left.add(t);
+            }
         }
         else if (compResult > 0) { // ADD TO RIGHT
-            try { // ASSUME ADDING TO NODE
-                this.right.add(t);
-            }
-            catch (UnsupportedOperationException e) { // ADD TO LEAF
+            if (this.right.isLeaf()) {
                 this.right = new Node<T>(Color.RED, this.comp, this,
                         this.right, t, this.right);
-                ((Node<?>) this.right).balance();
+                ((Node<T>) this.right).balance();
+            }
+            else {
+                this.right.add(t);
             }
         }
     }
@@ -106,13 +88,16 @@ class Node<T> implements RBTree<T> {
      * Rules: - No Red Node has a red Parent - All Paths from a Node to a Leaf
      * have the same number of Black Nodes.
      * 
+     * Note: Use of == is valid, since I am comparing algorithmic reference not
+     * value.
+     * 
      * INVARIANT: SUB TREES OF THIS ARE BALANCED AND COLORED CORRECTLY
      * THIS.COLOR = RED
      */
     protected void balance() {
         Node<T> node = this;
 
-        if (!(this.parent instanceof Node)) { // IS THIS THE ROOT NODE?
+        if (this.parent == null) { // IS THIS THE ROOT NODE?
             node.color = Color.BLACK;
         } // HAS PARENT
 
@@ -130,14 +115,14 @@ class Node<T> implements RBTree<T> {
             } // HAS PARENT && PARENT IS RED && HAS GRANDPARENT && NO RED UNCLE
 
             else {
-                if (node.equals(node.parent.right)
-                        && node.parent.equals(node.parent.parent.left)) {
+                if ((node == node.parent.right)
+                        && (node.parent == node.parent.parent.left)) {
                     node.rotateLeft();
                     node = (Node<T>) (node.left); // Node = old parent
                 }
 
-                else if (node.equals(node.parent.left)
-                        && node.parent.equals(node.parent.parent.right)) {
+                else if ((node == node.parent.left)
+                        && (node.parent == node.parent.parent.right)) {
                     node.rotateRight();
                     node = (Node<T>) (node.right); // Node = old parent
                 }
@@ -145,7 +130,7 @@ class Node<T> implements RBTree<T> {
                 node.parent.setColor(Color.BLACK);
                 node.parent.parent.setColor(Color.RED);
 
-                if (node.equals(node.parent.left)) {
+                if (node == node.parent.left) {
                     node.parent.rotateRight();
                 }
                 else {
@@ -153,6 +138,16 @@ class Node<T> implements RBTree<T> {
                 }
             }
         }
+    }
+
+    /**
+     * This is not a Leaf.
+     * 
+     * @return false
+     */
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     /**
@@ -176,11 +171,14 @@ class Node<T> implements RBTree<T> {
      * @param that The Object to check against.
      * @return true if Node and same Ts, else false.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object that) {
-        return (that instanceof Node<?>)
-                && ((Node<?>) that).comp.equals(this.comp)
-                && ((Node<?>) that).toArrayList().equals(this.toArrayList());
+        return (this == that) || // Testing reference equivalence for algo speed
+                ((that instanceof Node<?>)
+                        && ((Node<?>) that).comp.equals(this.comp)
+                        && ((Node<T>) that).contains(this.val) && ((Node<?>) that)
+                        .toArrayList().equals(this.toArrayList()));
     }
 
     /**
@@ -202,7 +200,7 @@ class Node<T> implements RBTree<T> {
     public Node<T> getRoot() {
         Node<T> p = this;
 
-        while (p.parent instanceof Node<?>) {
+        while (p.parent != null) {
             p = p.parent;
         }
 
@@ -276,14 +274,14 @@ class Node<T> implements RBTree<T> {
      * [[parent.left, parent, this.left], this, this.right]
      */
     protected void rotateLeft() {
-        Node<T> oldParent = (this.parent);
+        Node<T> oldParent = this.parent;
         RBTree<T> oldLeft = this.left;
         Node<T> oldGP = this.parent.parent;
 
-        if ((oldGP instanceof Node<?>) && oldGP.left.equals(oldParent)) {
+        if ((oldGP != null) && oldGP.left.equals(oldParent)) {
             oldGP.left = this;
         }
-        else if (oldGP instanceof Node<?>) {
+        else if (oldGP != null) {
             oldGP.right = this;
         }
 
@@ -292,7 +290,7 @@ class Node<T> implements RBTree<T> {
         oldParent.parent = this;
         this.parent = oldGP;
 
-        if (oldLeft instanceof Node) {
+        if (!oldLeft.isLeaf()) {
             ((Node<T>) oldLeft).parent = oldParent;
         }
     }
@@ -302,14 +300,14 @@ class Node<T> implements RBTree<T> {
      * this, [this.right, parent, parent.right]]
      */
     protected void rotateRight() {
-        Node<T> oldParent = (this.parent);
+        Node<T> oldParent = this.parent;
         RBTree<T> oldRight = this.right;
         Node<T> oldGP = this.parent.parent;
 
-        if ((oldGP instanceof Node) && oldGP.left.equals(oldParent)) {
+        if ((oldGP != null) && oldGP.left.equals(oldParent)) {
             oldGP.left = this;
         }
-        else if (oldGP instanceof Node) {
+        else if (oldGP != null) {
             oldGP.right = this;
         }
 
@@ -318,7 +316,7 @@ class Node<T> implements RBTree<T> {
         oldParent.parent = this;
         this.parent = oldGP;
 
-        if (oldRight instanceof Node) {
+        if (!oldRight.isLeaf()) {
             ((Node<T>) oldRight).parent = oldParent;
         }
     }

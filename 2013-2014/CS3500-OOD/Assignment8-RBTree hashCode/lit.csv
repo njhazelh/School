@@ -1,9 +1,9 @@
 Comparator,File,Size (#),Build (ms),Iterate (ms),Contains (ms)
-StringByLex,iliad.txt,7885,81,0,0
-StringReverseByLex,iliad.txt,7885,266,0,0
-StringWithOutPrefixByLex,iliad.txt,4606,90,0,0
+StringByLex,iliad.txt,7885,60,0,0
+StringReverseByLex,iliad.txt,7885,401,0,1
+StringWithOutPrefixByLex,iliad.txt,4606,73,0,0
 
-StringByLex,hippooath_DUPLICATES.txt,230,37,0,0
-StringReverseByLex,hippooath_DUPLICATES.txt,230,195,0,1
-StringWithOutPrefixByLex,hippooath_DUPLICATES.txt,218,51,0,0
+StringByLex,hippooath_DUPLICATES.txt,230,52,0,0
+StringReverseByLex,hippooath_DUPLICATES.txt,230,286,0,1
+StringWithOutPrefixByLex,hippooath_DUPLICATES.txt,218,65,0,1
 

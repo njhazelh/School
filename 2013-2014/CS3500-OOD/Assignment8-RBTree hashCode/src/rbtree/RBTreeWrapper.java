@@ -55,7 +55,7 @@ public class RBTreeWrapper<T> implements Iterable<T> {
             this.tree = ((Node<T>) this.tree).getRoot();
         }
         catch (UnsupportedOperationException e) { // SWAP NODE WITH LEAF
-            this.tree = new Node<T>(Color.BLACK, this.comp, this.tree, s,
+            this.tree = new Node<T>(Color.BLACK, this.comp, null, this.tree, s,
                     this.tree);
         }
     }

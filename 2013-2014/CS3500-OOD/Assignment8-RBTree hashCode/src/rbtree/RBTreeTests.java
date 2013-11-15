@@ -92,15 +92,15 @@ public class RBTreeTests {
         Leaf<String> lenLeaf = new Leaf<String>(len);
         Leaf<Integer> intLeaf = new Leaf<Integer>(num);
         
-        Node<String> n1 = new Node<String>(Color.BLACK, lex, lexLeaf, "f",
+        Node<String> n1 = new Node<String>(Color.BLACK, lex, null, lexLeaf, "f",
                 lexLeaf);
-        Node<String> n2 = new Node<String>(Color.BLACK, len, lenLeaf,
+        Node<String> n2 = new Node<String>(Color.BLACK, len, null, lenLeaf,
                 "a", lenLeaf);
-        Node<String> n3 = new Node<String>(Color.BLACK, lex, lexLeaf, "e",
+        Node<String> n3 = new Node<String>(Color.BLACK, lex, null, lexLeaf, "e",
                 lexLeaf);
-        Node<Integer> n4 = new Node<Integer>(Color.BLACK, num, intLeaf, 0,
+        Node<Integer> n4 = new Node<Integer>(Color.BLACK, num, null, intLeaf, 0,
                 intLeaf);
-        Node<Integer> n5 = new Node<Integer>(Color.BLACK, num, intLeaf, 0,
+        Node<Integer> n5 = new Node<Integer>(Color.BLACK, num, null, intLeaf, 0,
                 intLeaf);
         
 

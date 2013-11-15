@@ -30,6 +30,14 @@ interface IBTree<T> extends Iterable<T> {
     public boolean contains(T s);
 
     /**
+     * Is this BTree a Leaf?
+     * 
+     * @return true if it's a Leaf
+     */
+    public boolean isLeaf();
+    
+    
+    /**
      * Is that an IBTree with the same Ts and Comparator as this?
      * 
      * @param that The Object to compare this to.

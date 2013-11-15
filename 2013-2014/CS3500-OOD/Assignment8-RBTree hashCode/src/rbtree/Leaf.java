@@ -172,4 +172,14 @@ class Leaf<T> implements RBTree<T> {
     public <R> R accept(RBTreeVisitor<T, R> visitor) {
         return visitor.visitEmpty(this.comp, this.getColor().toString());
     }
+
+    /**
+     * This is a Leaf.
+     * 
+     * @return true
+     */
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
 }
