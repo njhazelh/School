@@ -1,70 +1,70 @@
 Comparator,File,Num Strings,Size (#),Build (ms),Iterate (ms),Contains (ms)
-StringByLex,lexicographically_ordered.txt,2000,2000,33,1,1
-StringByLex,lexicographically_ordered.txt,4000,4000,15,2,0
-StringByLex,lexicographically_ordered.txt,8000,8000,17,2,0
-StringByLex,lexicographically_ordered.txt,16000,16000,15,1,1
-StringByLex,lexicographically_ordered.txt,20000,19999,15,0,0
-StringByLex,lexicographically_ordered.txt,24000,23996,18,0,0
+StringByLex,lexicographically_ordered.txt,2000,2000,36,1,1
+StringByLex,lexicographically_ordered.txt,4000,4000,16,1,1
+StringByLex,lexicographically_ordered.txt,8000,8000,14,2,1
+StringByLex,lexicographically_ordered.txt,16000,16000,16,1,0
+StringByLex,lexicographically_ordered.txt,20000,19999,25,0,0
+StringByLex,lexicographically_ordered.txt,24000,23996,20,0,0
 
-StringReverseByLex,lexicographically_ordered.txt,2000,2000,28,0,1
-StringReverseByLex,lexicographically_ordered.txt,4000,4000,45,0,1
-StringReverseByLex,lexicographically_ordered.txt,8000,8000,58,0,1
-StringReverseByLex,lexicographically_ordered.txt,16000,16000,104,0,1
-StringReverseByLex,lexicographically_ordered.txt,20000,19999,104,0,1
-StringReverseByLex,lexicographically_ordered.txt,24000,23996,115,0,1
+StringReverseByLex,lexicographically_ordered.txt,2000,2000,36,0,2
+StringReverseByLex,lexicographically_ordered.txt,4000,4000,49,0,0
+StringReverseByLex,lexicographically_ordered.txt,8000,8000,62,0,1
+StringReverseByLex,lexicographically_ordered.txt,16000,16000,117,0,1
+StringReverseByLex,lexicographically_ordered.txt,20000,19999,99,0,1
+StringReverseByLex,lexicographically_ordered.txt,24000,23996,157,0,1
 
-StringWithOutPrefixByLex,lexicographically_ordered.txt,2000,1872,14,0,1
-StringWithOutPrefixByLex,lexicographically_ordered.txt,4000,3593,14,0,1
-StringWithOutPrefixByLex,lexicographically_ordered.txt,8000,6878,28,0,1
-StringWithOutPrefixByLex,lexicographically_ordered.txt,16000,12460,59,0,1
-StringWithOutPrefixByLex,lexicographically_ordered.txt,20000,15255,79,0,0
-StringWithOutPrefixByLex,lexicographically_ordered.txt,24000,18640,64,0,0
+StringWithOutPrefixByLex,lexicographically_ordered.txt,2000,1872,14,0,0
+StringWithOutPrefixByLex,lexicographically_ordered.txt,4000,3593,15,0,1
+StringWithOutPrefixByLex,lexicographically_ordered.txt,8000,6878,30,0,1
+StringWithOutPrefixByLex,lexicographically_ordered.txt,16000,12460,56,0,1
+StringWithOutPrefixByLex,lexicographically_ordered.txt,20000,15255,77,0,0
+StringWithOutPrefixByLex,lexicographically_ordered.txt,24000,18640,66,1,0
 
 StringByLex,reverse_ordered.txt,2000,1997,3,0,0
 StringByLex,reverse_ordered.txt,4000,3996,4,0,0
-StringByLex,reverse_ordered.txt,8000,7996,6,0,0
+StringByLex,reverse_ordered.txt,8000,7996,5,0,0
 StringByLex,reverse_ordered.txt,16000,15996,12,0,0
 StringByLex,reverse_ordered.txt,20000,19994,15,0,1
 StringByLex,reverse_ordered.txt,24000,23993,18,0,1
 
-StringReverseByLex,reverse_ordered.txt,2000,1997,11,0,1
-StringReverseByLex,reverse_ordered.txt,4000,3996,28,0,2
-StringReverseByLex,reverse_ordered.txt,8000,7996,70,0,2
-StringReverseByLex,reverse_ordered.txt,16000,15996,153,0,1
-StringReverseByLex,reverse_ordered.txt,20000,19994,144,0,1
-StringReverseByLex,reverse_ordered.txt,24000,23993,179,0,1
+StringReverseByLex,reverse_ordered.txt,2000,1997,11,0,0
+StringReverseByLex,reverse_ordered.txt,4000,3996,37,0,2
+StringReverseByLex,reverse_ordered.txt,8000,7996,118,0,2
+StringReverseByLex,reverse_ordered.txt,16000,15996,177,0,1
+StringReverseByLex,reverse_ordered.txt,20000,19994,145,0,1
+StringReverseByLex,reverse_ordered.txt,24000,23993,214,0,1
 
-StringWithOutPrefixByLex,reverse_ordered.txt,2000,1496,2,0,0
-StringWithOutPrefixByLex,reverse_ordered.txt,4000,3002,5,0,0
-StringWithOutPrefixByLex,reverse_ordered.txt,8000,5973,11,0,0
-StringWithOutPrefixByLex,reverse_ordered.txt,16000,12061,25,0,1
-StringWithOutPrefixByLex,reverse_ordered.txt,20000,15184,33,0,1
-StringWithOutPrefixByLex,reverse_ordered.txt,24000,18387,41,0,0
+StringWithOutPrefixByLex,reverse_ordered.txt,2000,1496,4,0,1
+StringWithOutPrefixByLex,reverse_ordered.txt,4000,3002,8,0,0
+StringWithOutPrefixByLex,reverse_ordered.txt,8000,5973,18,0,0
+StringWithOutPrefixByLex,reverse_ordered.txt,16000,12061,38,0,0
+StringWithOutPrefixByLex,reverse_ordered.txt,20000,15184,53,0,1
+StringWithOutPrefixByLex,reverse_ordered.txt,24000,18387,66,0,1
 
 StringByLex,prefix_ordered.txt,2000,2000,2,0,0
-StringByLex,prefix_ordered.txt,4000,4000,3,0,0
-StringByLex,prefix_ordered.txt,8000,8000,6,0,0
-StringByLex,prefix_ordered.txt,16000,15999,14,0,0
-StringByLex,prefix_ordered.txt,20000,19999,18,0,1
-StringByLex,prefix_ordered.txt,24000,23993,21,0,1
+StringByLex,prefix_ordered.txt,4000,4000,4,0,0
+StringByLex,prefix_ordered.txt,8000,8000,7,0,0
+StringByLex,prefix_ordered.txt,16000,15999,17,0,0
+StringByLex,prefix_ordered.txt,20000,19999,21,0,0
+StringByLex,prefix_ordered.txt,24000,23993,25,0,0
 
-StringReverseByLex,prefix_ordered.txt,2000,2000,8,0,1
-StringReverseByLex,prefix_ordered.txt,4000,4000,17,0,1
-StringReverseByLex,prefix_ordered.txt,8000,8000,81,0,1
-StringReverseByLex,prefix_ordered.txt,16000,15999,59,0,1
-StringReverseByLex,prefix_ordered.txt,20000,19999,77,0,1
-StringReverseByLex,prefix_ordered.txt,24000,23993,94,0,1
+StringReverseByLex,prefix_ordered.txt,2000,2000,13,0,1
+StringReverseByLex,prefix_ordered.txt,4000,4000,27,0,2
+StringReverseByLex,prefix_ordered.txt,8000,8000,104,0,1
+StringReverseByLex,prefix_ordered.txt,16000,15999,63,1,0
+StringReverseByLex,prefix_ordered.txt,20000,19999,79,0,1
+StringReverseByLex,prefix_ordered.txt,24000,23993,95,0,0
 
-StringWithOutPrefixByLex,prefix_ordered.txt,2000,1469,3,0,0
+StringWithOutPrefixByLex,prefix_ordered.txt,2000,1469,2,0,1
 StringWithOutPrefixByLex,prefix_ordered.txt,4000,3024,6,0,0
 StringWithOutPrefixByLex,prefix_ordered.txt,8000,6021,13,0,0
 StringWithOutPrefixByLex,prefix_ordered.txt,16000,12090,27,0,0
 StringWithOutPrefixByLex,prefix_ordered.txt,20000,15290,35,0,0
-StringWithOutPrefixByLex,prefix_ordered.txt,24000,18407,80,0,1
+StringWithOutPrefixByLex,prefix_ordered.txt,24000,18407,86,0,1
 
-StringByLex,random_order.txt,2000,2000,1,0,1
-StringByLex,random_order.txt,4000,3999,2,0,1
-StringByLex,random_order.txt,8000,7999,5,0,0
+StringByLex,random_order.txt,2000,2000,1,0,0
+StringByLex,random_order.txt,4000,3999,3,0,0
+StringByLex,random_order.txt,8000,7999,6,0,0
 StringByLex,random_order.txt,16000,15997,12,0,0
 StringByLex,random_order.txt,20000,19997,16,0,0
 StringByLex,random_order.txt,24000,23997,19,0,0
@@ -73,13 +73,13 @@ StringReverseByLex,random_order.txt,2000,2000,6,0,1
 StringReverseByLex,random_order.txt,4000,3999,12,0,1
 StringReverseByLex,random_order.txt,8000,7999,27,0,1
 StringReverseByLex,random_order.txt,16000,15997,59,0,1
-StringReverseByLex,random_order.txt,20000,19997,77,0,1
-StringReverseByLex,random_order.txt,24000,23997,97,0,1
+StringReverseByLex,random_order.txt,20000,19997,78,0,1
+StringReverseByLex,random_order.txt,24000,23997,96,1,0
 
-StringWithOutPrefixByLex,random_order.txt,2000,1901,2,0,0
-StringWithOutPrefixByLex,random_order.txt,4000,3660,5,0,0
+StringWithOutPrefixByLex,random_order.txt,2000,1901,3,0,0
+StringWithOutPrefixByLex,random_order.txt,4000,3660,4,0,0
 StringWithOutPrefixByLex,random_order.txt,8000,6943,9,0,0
 StringWithOutPrefixByLex,random_order.txt,16000,12913,20,0,0
 StringWithOutPrefixByLex,random_order.txt,20000,15755,27,0,1
-StringWithOutPrefixByLex,random_order.txt,24000,18529,37,0,1
+StringWithOutPrefixByLex,random_order.txt,24000,18529,48,0,1
 
