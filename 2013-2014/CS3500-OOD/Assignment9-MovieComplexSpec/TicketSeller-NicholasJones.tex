@@ -1,0 +1,299 @@
+\documentclass[12pt,titlepage,letterpaper]{article}
+
+\ifx\pdftexversion\undefined
+\usepackage[dvips]{graphicx}
+\else
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+
+\usepackage{parallel}
+
+\title{PS9: Movie Complex Specs.}
+\author{Nicholas Jones}
+\date{\today}
+
+\begin{document}
+\maketitle
+ 
+\tableofcontents
+\newpage
+
+\begin{abstract}
+
+The goal is to design a Java application that will manage the sales of movie tickets in a cinema complex. The complex consists of several theaters that show movies at different times. The same movie may be showing in more than one theater. The ticket prices may be different for children, adults, and seniors. There may also be a different price for the matinees. The cinema complex wants to be able to analyze its sales by various criteria~---tickets sold to seniors, tickets for a specific movie, matinee ticket sales, etc.
+
+Some cinema complexes may also have luxury theaters with higher fixed price for all patrons.
+
+\end{abstract}
+
+\section{Requirements}
+\subsection{Use Cases}
+Following information describes the functionality of the systems under certain scenarios.
+
+\subsubsection{Customer wants Movie Information}
+\begin{enumerate}
+ 	\item Customer selects Movie and date to get times for.
+ 	\item System gets list of unfilled Movie times on the given date.
+\end{enumerate}
+
+\subsubsection{Customer Wants to Know which Movies are Showing}
+\begin{enumerate}
+\item Customer clicks 'Current Movies' Button
+\item System generates list of current movies and displays it.
+\end{enumerate}
+
+\subsubsection{Customer buys a ticket}
+\begin{enumerate}
+ 	\item Customer finds a movie and time that they want.
+ 	\item Customer clicks 'buy' button.
+ 	\item System displays buy screen.
+ 	\item Customer selects number and type of tickets.
+ 	\item Customer clicks 'Finish' button
+ 	\item System stores sale to Billing and increases number of people attending the event by the number of tickets.
+ 	\item System displays theater number for user.
+\end{enumerate}
+
+\subsubsection{Customer buys a ticket, but SOLD OUT}
+\begin{enumerate}
+ 	\item Customer finds a movie and time that they want.
+ 	\item Customer clicks 'buy' button.
+ 	\item System displays buy screen.
+ 	\item Customer selects number and type of tickets.
+ 	\item Customer clicks 'Finish' button
+ 	\item System does not store ticket sale or increase attendees.
+ 	\item System displays ''SOLD OUT'' Error for user.
+\end{enumerate}
+
+\subsubsection{Billing wants Sales Information}
+\begin{enumerate}
+ 	\item Accountant clicks get 'CSV file' button.
+ 	\item System returns a CSV file of all Sales
+\end{enumerate}
+
+\subsubsection{Manager adds a Movie}
+\begin{enumerate}
+ 	\item Manager clicks 'Add Movie' button.
+ 	\item Manager enters Movie information.
+ 	\item Manager clicks 'Enter'
+ 	\item System adds movie to list of Movies.
+\end{enumerate}
+
+\subsubsection{Manger adds an event}
+\begin{enumerate}
+ 	\item Manager clicks 'Add Event' button.
+ 	\item Manager selects Movie to show, time, date, prices, and theater.
+ 	\item Manager clicks enter.
+ 	\item System adds new event to correct Theater object.
+\end{enumerate}
+
+\subsubsection{Manger adds an event but time overlaps another}
+\begin{enumerate}
+ 	\item Manager clicks 'Add Event' button.
+ 	\item Manager selects Movie to show, time, date, prices, and theater.
+ 	\item Manager clicks enter.
+ 	\item 'Overlap' error displayed to Manager.
+\end{enumerate}
+
+\subsubsection{Manager edits a Movie}
+\begin{enumerate}
+ 	\item Manager clicks 'Edit Movie' button.
+ 	\item Manager selects Movie to edit.
+ 	\item Manager clicks 'Enter'
+ 	\item Manager changes Movie information or clicks 'Delete' button.
+ 	\item Manager clicks 'Enter'
+ 	\item System changes information of movie.
+\end{enumerate}
+
+\subsubsection{Manger edits an event}
+\begin{enumerate}
+ 	\item Manager clicks 'Edit Event' button.
+ 	\item Manager selects Event to edit
+ 	\item Manager clicks enter.
+ 	\item Manager enters edits or clicks 'delete button'
+ 	\item Manager clicks 'Enter'
+ 	\item System makes changes or returns 'Overlap'
+\end{enumerate}
+
+\subsection{Domains/Relations/Constraints}
+\subsubsection{Domains}
+  	\begin{description}
+\item[ComplexController] Manages data and ensures data requirements are met.  Provided access and ability to edit data.
+\item[CustomerView] Allows Customer to see movie and event information, and purchase tickets.
+\item[ManagerView] Allows manager to see and edit movie\textbackslash event information and sales.
+\item[AccountantView] Allows accountants to access sales information and get a CSV file of sales.
+\end{description}
+\subsubsection{Relations}
+\begin{description}
+\item[CustomerView] Interacts with the Customer. Provides a list of current movies and events to see.  Allows user to purchase tickets. Gets data from the ComplexController and provides sale information to the ComplexController.
+
+\item[ManagerView] Interacts with the Manager. Provides a list of movie and event information, and allows Manager to add/edit/delete events and movies.
+
+\item[BillingView] Interacts with the Accountants.  Provides accountants with CSV file of sales.
+
+\item[ComplexController] Interacts with all other components.  Manages information for Complex, and ensures requirements are met. Provides access to lists of events, movies, theaters, sales, and allows ability to edit or add information using various user views.
+
+\item[Movie] Stores Movie data such as title, length, rating.
+
+\item[Event] Stores event info such as Movie to show, time, date, and theater.
+
+\item[Theater] Represents a Theater in the complex, contains Events, but cannot have more than one event at a time. May have an additional price due to luxury status.
+
+\item[Sale] Stores data for a single sale.
+
+\item[Ticket] Stores price and demographics and Event info for a single ticket.
+\end{description}
+
+\subsubsection{Constraints}
+\begin{itemize}
+\item System should function with 1 or more theaters.
+\item System should be able to function for many movies.
+\item System should allow edits, purchases, additions within a second.
+\end{itemize}
+
+\subsection{Requirements}
+\subsubsection{Functional Requirements}
+\begin{itemize}
+\item Customers must be able to buy tickets.
+\item Manager must be able to add,edit,remove Events/Movies
+\item Billing needs access to Ticket sale information in a CSV file.
+\end{itemize}
+
+\subsubsection{Nonfunctional Requirements}
+\begin{itemize}
+\item No two events can be in the same theater at the same time.
+\item One movie can be played in more than one theater at a time.
+\item There must be option for several theaters
+\item There must be options for different ticket prices for children, adults, seniors
+\item Some theaters may be luxury and cost more.
+\end{itemize}
+
+\section{Module Dependency Diagram}
+\begin{center}
+\includegraphics{complexFigures.1}
+\end{center}
+
+\section{CRC Cards}
+\subsection{CustomerView}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item Allows Customer to view Movie information by date and time.
+\item Allows Customer to buy tickets.
+\end{itemize} &
+\begin{itemize}
+\item ComplexController
+\item Movie
+\item Event
+\item Ticket
+\item Theater
+\item Sale
+\end{itemize}
+\end{tabular} 
+\subsection{ManagerView}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item Allows Manager to change Movie and Event information.
+\end{itemize} &
+\begin{itemize}
+\item ComplexController
+\item Event
+\item Movie
+\item Theater
+\item Ticket
+\end{itemize}
+\end{tabular} 
+\subsection{BillingView}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item Allows Accountants to get a CSV file of Sales.
+\end{itemize} &
+\begin{itemize}
+\item ComplexController
+\end{itemize}
+\end{tabular} 
+\subsection{ComplexController}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item Manages data and preserves data requirements
+\item provides data for various views
+\item knows the theaters of the complex
+\item knows the movies shown in the complex
+\item knows the sales made
+\item Accepts new sales
+\item Accepts changes to information if valid
+\item Reports errors if information not valid
+\item generates CSV file for BillingView
+\end{itemize} &
+\begin{itemize}
+\item Movie
+\item Event
+\item Ticket
+\item Theater
+\item Sale
+\item BillingView
+\item ManagerView
+\item Customerview
+\end{itemize}
+\end{tabular} 
+\subsection{Theater}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item Represents a single Theater
+\item preserves requirement that no two events can show at the same time in one theater.
+\item knows planned future events in this theater
+\item knows base price for events in this theater
+\item knows the number of seats in the room (i.e. max people)
+\end{itemize} &
+\begin{itemize}
+\item Movie
+\item Event
+\item Ticket
+\end{itemize}
+\end{tabular} 
+\subsection{Movie}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item Stores information for a movie.
+\item knows movie title
+\item knows movie length
+\item knows movie rating
+\item knows movie release date
+\end{itemize} &
+\end{tabular} 
+\subsection{Event}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item knows which tickets are available for this event
+\item knows the movie to be shown
+\item knows the time of the movie
+\item knows the date of the movie
+\item knows which theater the event is in
+\end{itemize} &
+\begin{itemize}
+\item Theater
+\item Ticket
+\item Movie
+\end{itemize}
+\end{tabular} 
+\subsection{Sale}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item knows the tickets in this sale
+\end{itemize} &
+\begin{itemize}
+\item Ticket
+\end{itemize}
+\end{tabular} 
+\subsection{Ticket}
+\begin{tabular}{p{.49\textwidth}|p{.49\textwidth}}
+\begin{itemize}
+\item knows the price of the ticket
+\item knows the Event that the ticket is for.
+\item knows the demographic for this ticket (Student, Senior, Adult, Child...)
+\end{itemize} &
+\begin{itemize}
+\item Event
+\end{itemize}
+\end{tabular} 
+\end{document}
+

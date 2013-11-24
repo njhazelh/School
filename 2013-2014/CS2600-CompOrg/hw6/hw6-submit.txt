@@ -1,0 +1,11 @@
+
+If your file is successfully submitted, you will see
+  a confirmation message at the end of this command.
+
+Your file, /home/njhazelh/Documents/hw6/hw6.py, has been successfully submitted
+  as file:  /net/course/cs2600gc/hw6.handin/njhazelh-hw6.py.10116261
+
+If you change your mind, you can delete the file by doing:
+  rm /net/course/cs2600gc/hw6.handin/njhazelh-hw6.py.10116261
+
+

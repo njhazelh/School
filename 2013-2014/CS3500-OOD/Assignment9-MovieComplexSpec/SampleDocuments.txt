@@ -1,0 +1,180 @@
+Navigation system
+
+Problem statement:
+------------------
+
+You are to design a system that will keep track of places and roads between 
+them and provide the user with the routing information for traveling form 
+one place to another.
+
+The places will have some geographic location, typically the roads will be 
+straight lines (though in the future we may modify this to include curved 
+roads. There may be more than one road connecting two places. The roads
+may be rated (interstate, state road, local road, dirt road), there may be
+toll roads as well.
+
+The routing should respect the user's choices and provide the shortest route
+subject to the user's constraints.
+
+At times we may want to update the information about the places and roads
+(for example if a road is closed for construction). Of course, we also 
+should be able to input the original information about the places and roads.
+
+
+
+Use Case 1: Getting routing information
+-----------------------------------------
+ 1. User selects the start location, the destination, and the constraints on 
+    the routing (e.g., no toll roads, major roads, ...).
+ 2. The system generates the routing.
+
+
+Requirements
+-------------
+The system shall allow the user to input start location, the destination, 
+and the constraints in order to receive routing information.
+
+The system shall generate routing options based on the user's input.
+
+The routing output shall include a graphical display or a series of places 
+to go through together with the directions for each segment: distance, 
+direction (turn slightly left, or travel northwest).
+
+System manager should be able input information about the places that
+are served. The information must provide enough information so that 
+the system can compute the distances, direction, etc.
+
+The information included within the system will include whether there 
+is a toll on any road between two places, whether the road is a major 
+road.
+
+If there is more than road connecting two locations---a major road and 
+a 'back road, the system will give the user multiple routing options.
+
+
+Domains:
+--------
+
+User interface: Input module
+                Reporting the results - incremental reports (next leg)
+
+Manager interface: Input module for providing initial data
+                   Input for updating the information
+        
+Data manager: module that keeps track of the data, verifies its integrity,
+              processes the updates
+
+Algorithm: module that computes the shortest path, computes the directions
+           for Navigation hints, possibly computes the distances (if data is
+           given by its coordinates and roads are assumes to be straight lines).
+
+
+Relations:
+----------
+
+User interface: interacts with the user, provides selection of places, allows 
+                for corrections, interacts with the data manager to get the
+                selection of places, reports to the data manager the user's 
+                selection of the start and finish, receives from the data manager
+                the suggested routing and navigation instructions.
+
+Manager interface: Allows the manager to initialize and to modify the information
+                   about the places and road between them. Interacts with data manager
+                   notifying it of any changes in the places and roads.
+
+Data manager: Handles all information about the map used for navigation - 
+              the places, roads, their characteristics. Is responsible for integrity 
+              of data (distances must be > 0). Communicates with the algorithms:
+              requests the initial routing, reports its results to the user interface.
+              Requests updates from the algorithms if the routing requirements change
+              (recalculating).
+
+Algorithms: Receives requests from data manager, computes the desired path, computes
+            the navigation instructions, reports to the data manager.
+
+
+Constraints:
+------------
+
+The map must be designed in such a way that all places are connected with a road.
+The distance from one place to a different one must be greater than 0.
+If all roads are assumed to be straight lines, then the distance from one place
+to another must be the same on two roads of different quality.
+
+
+Module dependency diagram:
+--------------------------
+
+  +----------------+        +--------------+        +-------------------+
+  | User Interface |<------>| Data manager |<------>| Manager Interface |
+  +----------------+        +--------------+        +-------------------+
+                                    ^
+                                    |
+                                    |
+                                    v
+                              +------------+
+                              | Algorithms |
+                              +------------+
+
+
+Data model:
+-----------
+
+Coordinates: given as (x, y) pair, or latitude and longitude
+
+Place name: the name of a place
+Place location: the location on the map in terms of coordinates
+
+Road: the road between two places
+optionally - road grade (local, state, interstate)
+
+distance: given or computed
+
+route: ordered collection of places 
+       plus ordered collection of directional information;
+           distance, direction
+
+Map: collection of places and roads starting from them
+
+Each road connects exactly two places.
+Each place may have several roads for which it is the start.
+Each place may have several roads for which it is the finish.
+
+... and additional classes as needed; classes for user interactions,
+manager's functions. reporting functions…
+
+
+UML diagram:
+------------
+
++----------------------------------------+
+| Map                                    |
++----------------------------------------+
+| HashMap<Place, RoadList> places        |--+--------+
++----------------------------------------+  |        |
+| void addRoad(Road)                     |  |        |
+| void addPlace(Place)                   |  |        |
+| void closeRoad(Road)                   |  |        |
+| ArrayList<Road> getRoads(Place, Place) |  |        |
+| ...                                    |  |        |
++----------------------------------------+  |        |
+                                            |        |
+                +---------------------------+        |
+                |                                    |
+                v                                    v
+       +-------------------------------+  +--------------------+
+       | Place                         |  | Road               |
+       +-------------------------------+  +--------------------+
+       | CartPt loc                    |  | Place start        |
+       +-------------------------------+  | Place finish       |
+       | double distTo(Place)          |  | int quality        |
+       | ArrayList<Places> neighbors() |  +--------------------+
+       | ...                           |  | Direction getDir() |
+       +-------------------------------+  | ...                |
+                                          +--------------------+
+ ...         
+
+Additional classes for user interfaces, for algorithms class, and reporting functions.
+Additional methods for all classes.
+
+
