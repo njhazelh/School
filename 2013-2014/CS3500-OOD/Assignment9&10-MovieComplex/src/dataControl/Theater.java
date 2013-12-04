@@ -1,3 +1,7 @@
+/* Name; Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
+ */
 package dataControl;
 
 import java.util.ArrayList;
@@ -32,6 +36,15 @@ public class Theater {
         this.basePrice = basePrice;
         this.isLuxury = isLuxury;
         this.size = size;
+    }
+    
+    /**
+     * Remove the given event from the list of events.
+     * 
+     * @param e The Event to remove.
+     */
+    void removeEvent(Event e) {
+        this.events.remove(e);
     }
     
     /**

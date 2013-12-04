@@ -1,4 +1,10 @@
+/* Name; Nicholas Jones
+ * Email: njhazelh@zimbra.ccs.neu.edu
+ * Comments: n/a
+ */
 package dataControl;
+
+import java.util.ArrayList;
 
 /**
  * Movie represents a movie such as "Cinderella", or "The Matrix" in an abstract sense.
@@ -22,6 +28,7 @@ public class Movie {
     private String title; // title of movie
     private int lengthInSeconds; // lengthInSeconds of movie in seconds
     private Rating rating; // MPAA rating of movie.
+    private ArrayList<Event> events = new ArrayList<Event>(); // Events showing this Movie in the future.
     
     /**
      * This is the contructor for a Movie. 
@@ -73,6 +80,15 @@ public class Movie {
     }
     
     /**
+     * Remove the given Event from the list of Events showing this Movie.
+     * 
+     * @param e The Event to remove.
+     */
+    void removeEvent(Event e) {
+        this.events.remove(e);
+    }
+    
+    /**
      * Is this <code>Movie</code> equal to that <code>Object</code>?
      * 
      * @param that The <code>Object</code> to compare equality to.
@@ -95,5 +111,15 @@ public class Movie {
     @Override
     public int hashCode() {
         return this.movieId;
+    }
+    
+    /**
+     * Adds the event to the list of events
+     * @param e
+     */
+    void addEvent(Event e) {
+        if (!this.events.contains(e) && e.getMovie().equals(this)) {
+            this.events.add(e);
+        }
     }
 }
