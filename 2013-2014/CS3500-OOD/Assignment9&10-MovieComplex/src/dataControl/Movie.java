@@ -4,7 +4,7 @@ package dataControl;
  * Movie represents a movie such as "Cinderella", or "The Matrix" in an abstract sense.
  * 
  * Requirements : movieId is a unique integer given by the ComplexController so that
- * two Movies with the same title, length, and rating could still be different movies.
+ * two Movies with the same title, lengthInSeconds, and rating could still be different movies.
  * Clearly, this would be confusing for viewers, but it's certainly an option.
  * 
  * Example:
@@ -20,21 +20,29 @@ package dataControl;
 public class Movie {
     private int movieId; // unique within ComplexController Movies.
     private String title; // title of movie
-    private int lengthInMinutes; // length of movie
+    private int lengthInSeconds; // lengthInSeconds of movie in seconds
     private Rating rating; // MPAA rating of movie.
     
     /**
      * This is the contructor for a Movie. 
      * @param movieId
      * @param title
-     * @param lengthInMinutes
+     * @param lengthInSeconds
      * @param rating
      */
-    protected Movie(int movieId, String title, int lengthInMinutes, Rating rating) {
+    protected Movie(int movieId, String title, int lengthInSeconds, Rating rating) {
         this.movieId = movieId;
         this.title = title;
-        this.lengthInMinutes = lengthInMinutes;
+        this.lengthInSeconds = lengthInSeconds;
         this.rating = rating;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getID() {
+        return this.movieId;
     }
     
     /**
@@ -47,12 +55,12 @@ public class Movie {
     }
     
     /**
-     * Accesses the length of this <code>Movie</code> in minutes.
+     * Accesses the lengthInSeconds of this <code>Movie</code> in minutes.
      * 
-     * @return The length of the Movie in minutes.
+     * @return The lengthInSeconds of the Movie in seconds.
      */
-    public int getLength() {
-        return this.lengthInMinutes;
+    public int getLengthInSecs() {
+        return this.lengthInSeconds;
     }
     
     /**

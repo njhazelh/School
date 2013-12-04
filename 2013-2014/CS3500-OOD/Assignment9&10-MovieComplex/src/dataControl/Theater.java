@@ -1,5 +1,7 @@
 package dataControl;
 
+import java.util.ArrayList;
+
 /**
  * Theater represents a single screen within a movie complex.
  * 
@@ -15,6 +17,7 @@ public class Theater {
     private ArrayList<Event> events = new ArrayList<Event>();
     private int basePrice = 0;
     private boolean isLuxury = false;
+    private int size;
     
     /**
      * This is the contructor for <code>Theater</code>
@@ -24,10 +27,24 @@ public class Theater {
      * @param basePrice The price added to any event price in this theater.
      * @param isLuxury Is this a luxury theater? Luxury theaters usually have a base price > 0, but not always.
      */
-    protected Theater(int theaterNumber, int basePrice, boolean isLuxury) {
+    Theater(int theaterNumber, int basePrice, boolean isLuxury, int size) {
         this.theaterNumber = theaterNumber;
         this.basePrice = basePrice;
         this.isLuxury = isLuxury;
+        this.size = size;
+    }
+    
+    /**
+     * Get the number of this Theater.
+     * 
+     * @return A number unique to this theater in the complex.
+     */
+    public int getNumber() {
+        return this.theaterNumber;
+    }
+    
+    public int getSize() {
+        return this.size;
     }
     
     /**
@@ -35,12 +52,22 @@ public class Theater {
      * 
      * @return The theaterNumber for this Theater.
      */
-    protected int getTheaterNumber() {
+    int getTheaterNumber() {
         return this.theaterNumber;
     }
     
-    protected void addEvent(Event event) {
+    void addEvent(Event event) throws OverlappingEventException{
+        for (Event e : this.events) {
+            if (e.isOverlapping(event)) {
+                throw new OverlappingEventException();
+            }
+        }
         
+        events.add(event);
+    }
+    
+    public ArrayList<Event> getEvents() {
+        return new ArrayList<Event>(this.events);
     }
     
     /**
@@ -58,7 +85,7 @@ public class Theater {
      * 
      * @param newPrice The new base price.
      */
-    protected void setBasePrice(int newPrice) {
+    void setBasePrice(int newPrice) {
         this.basePrice = newPrice;
     }
     
@@ -69,7 +96,7 @@ public class Theater {
      * 
      * @param isLuxury The new Status.
      */
-    protected void setLuxury(boolean isLuxury) {
+    void setLuxury(boolean isLuxury) {
         this.isLuxury = isLuxury;
     }
     
