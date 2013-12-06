@@ -21,8 +21,10 @@ public class SoldOutException extends RuntimeException {
     /**
      * CONSTRUCTOR
      */
-    public SoldOutException() { }
-    
+    public SoldOutException() {
+        // DO NOTHING
+    }
+
     /**
      * @param message The message of this exception
      */
@@ -31,17 +33,10 @@ public class SoldOutException extends RuntimeException {
     }
 
     /**
+     * @param msg The message of this Exception
      * @param cause The reason this was thrown
      */
-    public SoldOutException(Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * @param message The message of this Exception
-     * @param cause The reason this was thrown
-     */
-    public SoldOutException(String message, Throwable cause) {
-        super(message, cause);
+    public SoldOutException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 }

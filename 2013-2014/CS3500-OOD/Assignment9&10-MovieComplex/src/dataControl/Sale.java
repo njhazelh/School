@@ -4,45 +4,38 @@
  */
 package dataControl;
 
-import java.util.ArrayList;
-
 /**
- * Sale keeps track of a single Sale of Tickets.
- * 
- * Tickets can be to different Events at different times.
- * All tickets in a Sale ensure access to a seat the the purchased event.
+ * Sale keeps track of a single Sale of a Ticket for an event
  * 
  * @author Nick Jones
  * @version 12/3/2013
  */
 public class Sale {
-    // The list of tickets in this Sale.
-    private ArrayList<Ticket> tickets = new ArrayList<Ticket>();
-    
+    private Price price;
+    private Event event;
+
     /**
-     * Add a single <code>Ticket</code> to this <code>Sale</code>.
-     * 
-     * @param t The <code>Ticket</code> to add to this <code>Sale</code>.
+     * Constructor
+     * @param price The price associated with this sale
+     * @param event The event assocaited with this sale.
      */
-    void addTicket(Ticket t) {
-        tickets.add(t);
+    public Sale(Price price, Event event) {
+        this.price = price;
+        this.event = event;
+    }
+
+    /**
+     * @return the price
+     */
+    public Price getPrice() {
+        return price;
+    }
+
+    /**
+     * @return the event
+     */
+    public Event getEvent() {
+        return event;
     }
     
-    /**
-     * Get a list of the <code>Tickets</code> in this <code>Sale</code>.
-     * 
-     * @return The <code>Tickets</code> in this <code>Sale</code>.
-     */
-    public ArrayList<Ticket> getTickets() {
-        return new ArrayList<Ticket>(this.tickets);
-    }
-    
-    /**
-     * How many <code>Tickets</code> are in this Sale?
-     * 
-     * @return The number of Tickets in this Sale.
-     */
-    public int ticketsInSale() {
-        return this.tickets.size();
-    }
 }

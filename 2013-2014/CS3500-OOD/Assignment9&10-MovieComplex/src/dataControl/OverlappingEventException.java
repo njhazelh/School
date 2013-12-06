@@ -6,7 +6,7 @@ package dataControl;
 
 /**
  * OverlappingEventException represents the instance where the ComplexController
- * attempts to create an Event in a Theater at the same time as another Event 
+ * attempts to create an Event in a Theater at the same time as another Event
  * in the same Theater
  * 
  * @author Nick Jones
@@ -15,15 +15,17 @@ package dataControl;
 public class OverlappingEventException extends RuntimeException {
 
     /**
-     *  Apparently I need this.
+     * Apparently I need this.
      */
     private static final long serialVersionUID = -6611975394243731003L;
 
     /**
      * CONSTRUCTOR
      */
-    public OverlappingEventException() { }
-    
+    public OverlappingEventException() {
+        // DO NOTHING
+    }
+
     /**
      * @param msg The message of this exception
      */
@@ -32,17 +34,10 @@ public class OverlappingEventException extends RuntimeException {
     }
 
     /**
-     * @param message The message of this Exception
+     * @param msg The message of this Exception
      * @param cause The reason this was thrown
      */
     public OverlappingEventException(String msg, Throwable cause) {
         super(msg, cause);
-    }
-
-    /**
-     * @param cause The reason this was thrown
-     */
-    public OverlappingEventException(Throwable cause) {
-        super(cause);
     }
 }
