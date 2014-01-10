@@ -74,8 +74,44 @@ int main(int argc, char *argv[]) {
  * For these calculations, use PI = 3.14159.
 
  */
+
+double PI = 3.14159;
+int RADIUS = 3961;
+
+#define square(x) x * x
+
+/*
+ * Convert an angle in degrees to radians
+ */
+double degToRad(double deg) {
+  return deg * PI / 180.0;
+}
+
+/*
+ * Do the thing.
+ * Latitudes must be [-90, 90]
+ * Longitudes must be [-180, 180]
+ */
 double great_circle_distance(double lat1, double lon1, double lat2, double lon2) {
-  // TODO: Fill in this function
-  
-  return 0;
+  // Check for angles out of range
+  if (lat1 > 90.0 || lat1 < -90.0 || lat2 > 90.0 || lat2 < -90.0 ||
+      lon1 > 180.0 || lon1 < -180.0 || lon2 > 180.0 || lon2 < -180.0)
+    return -1;
+
+  // Convert to radians
+  lat1 = degToRad(lat1);
+  lat2 = degToRad(lat2);
+  lon1 = degToRad(lon1);
+  lon2 = degToRad(lon2);
+
+  // find the differences
+  double dLon = lon2 - lon1;
+  double dLat = lat2 - lat1;
+
+  // Find the Great Circle distance between the two points.
+  double a = square( sin(dLat / 2) ) + cos(lat1) * cos(lat2) * square( sin(dLon / 2) );
+  double c = 2 * atan2( sqrt(a), sqrt(1-a) );
+  double distance = RADIUS * c;
+
+  return distance;
 }
