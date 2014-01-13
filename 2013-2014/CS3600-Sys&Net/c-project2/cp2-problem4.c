@@ -15,7 +15,7 @@
 #include <string.h>
 
 // you may need to change this definition as well
-void swap(char *a, char *b);
+void swap(char **a, char **b);
 
 int main(int argc, const char **argv) {
   // check for the right number of arguments
@@ -33,7 +33,7 @@ int main(int argc, const char **argv) {
   // you may change the arguments to this call
   // you may not add any additional lines of code to
   // main(), though
-  swap(str1, str2);
+  swap(&str1, &str2);
 
   printf("The swapped values are: %s %s\n", str1, str2);
 }
@@ -45,6 +45,8 @@ int main(int argc, const char **argv) {
  * As a result, you may change the call to this function (and only the
  * call to this function).
  */
-void swap(char *a, char *b) {
-  // TODO: Modify this function so that a and b are swapped.
+void swap(char **a, char **b) {
+  char *temp = *a;
+  *a = *b;
+  *b = temp;
 }

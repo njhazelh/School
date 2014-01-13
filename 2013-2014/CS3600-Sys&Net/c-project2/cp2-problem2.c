@@ -33,9 +33,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_EMPLOYEES 10
+
+/*
+ * Employee Struct
+ * see info above.
+ */
+typedef struct employee {
+  char *name;
+  unsigned int salary;
+  unsigned int id;
+  char *location;
+} Employee_t;
+
+
 int add_employee(char *name, unsigned int id, unsigned int salary, char *location);
 int remove_employee(unsigned int id);
 int get_salary(unsigned int id);
+
+Employee_t employees[10];
+int numEmployees = 0;
 
 // Do not touch this function
 int main(int argc, char **argv) {
@@ -100,8 +117,19 @@ int main(int argc, char **argv) {
  *  -3 - if there is no more space
  */
 int add_employee(char *name, unsigned int id, unsigned int salary, char *location) {
-  // TODO: Fill in this function
-  return 0;
+    if (numEmployees == MAX_EMPLOYEES)
+      return -3;
+
+    // Check for employee already existing
+    for(int i = 0; i < numEmployees; i++) {
+      if (strcmp(employees[i].name, name) == 0)
+        return -1;
+      else if (employees[i].id == id)
+        return -2;
+    }
+
+    employees[numEmployees++] = (Employee_t) {name, salary, id, location};
+    return 0;
 }
 
 /**
@@ -111,8 +139,24 @@ int add_employee(char *name, unsigned int id, unsigned int salary, char *locatio
  * -1 - if employee was not found
  */
 int remove_employee(unsigned int id) {
-  // TODO: Fill in this function
-  return 0;
+  for (int i = 0; i < numEmployees; i++){
+
+    if (employees[i].id == id) {
+      free(employees[i].name);
+      free(employees[i].location);
+
+      for (int j = i; j < numEmployees - 1; j++) {
+        employees[j] = employees[j+1];
+      }
+
+      numEmployees--;
+
+      return 0;
+    }
+
+  }
+
+  return -1;
 }
 
 /**
@@ -122,6 +166,11 @@ int remove_employee(unsigned int id) {
  *   -1 - if employee was not found
  */
 int get_salary(unsigned int id) {
-  // TODO: Fill in this function
-  return 0;
+
+  for (int i = 0; i < numEmployees; i++) {
+    if (employees[i].id == id)
+      return employees[i].salary;
+  }
+
+  return -1;
 }

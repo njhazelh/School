@@ -50,7 +50,12 @@ int main(int argc, char **argv) {
  * strongly hint to look at the man pages to find the easy way.
  */
 char *string_to_time(struct tm time) {
-  // TODO fill in
-  return "undefined\n";
+  const int buffSize = 70;
+  char *ret = (char*) calloc(buffSize, sizeof(char));
+  if (strftime(ret, buffSize * sizeof(char), "%c\n", &time))
+    return ret;
+  else {
+    fprintf(stderr, "string_to_time: time too big");
+    exit(1);
+  }
 }
-

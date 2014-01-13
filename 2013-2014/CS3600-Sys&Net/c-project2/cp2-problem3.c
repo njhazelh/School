@@ -8,9 +8,9 @@
  * not touch anything in the main() function.
  *
  * Also note that you may not use any of the functions provided by <string.h>;
+
  * you must do all of the string manipulation yourself.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,8 +49,18 @@ int main(int argc, const char **argv) {
  * no more).
  */
 void str_cat(char *str1, char *str2, char *dst) {
-  // TODO: Delete the line below and fill in this function
-  dst[0] = '\0';
+  int i, j;
+
+  // copy chars from str1
+  for (i = 0; str1[i]; i++)
+    dst[i] = str1[i];
+
+  // copy chars from str2
+  for (j = 0; str2[j]; j++)
+    dst[i + j] = str2[j];
+
+  // terminate string
+  dst[i+j] = '\0';
 
   return;  
 }
@@ -60,9 +70,13 @@ void str_cat(char *str1, char *str2, char *dst) {
  * that occur in the argument and return the result.
  */
 int count_lowercase(char *str) {
-  // TODO: Fill in this function
+  int lower = 0;
 
-  return 0;
+  for (int i = 0; str[i]; i++)
+    if (str[i] >= 'a' && str[i] <= 'z')
+      lower++;
+
+  return lower;
 }
 
 /**
@@ -71,5 +85,19 @@ int count_lowercase(char *str) {
  * reverse order.
  */
 void reverse(char *str) {
-  // TODO: Fill in this function
+  char *str_p1 = str;
+  char *str_p2 = str;
+
+  // find end
+  while(*str_p2) str_p2++;
+  str_p2--;
+
+  // move in from beginning and end, swapping
+  while (str_p1 < str_p2) {
+    char temp = *str_p1;
+    *str_p1 = *str_p2;
+    *str_p2 = temp;
+    str_p1++;
+    str_p2--;
+  }
 }
