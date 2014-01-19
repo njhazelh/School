@@ -39,7 +39,7 @@ int main(int argc, const char **argv) {
   char *loc = str_find(str1, str2[0]);
   printf("Finding '%c' in '%s' is: %s\n", str2[0], str1, loc);
 
-  str_append(str3, str2);
+  str_append(str3, str2); 
   printf("The concatenation is: %s\n", str3);
 }
 
@@ -54,10 +54,10 @@ char *str_find(char *s, char c) {
   /* Scan s for the character.  When this loop is finished,
      s will either point to the end of the string or the
      character we were looking for.  */
-  while ( ((char) s) != '\0' && (*s = (char)c))
+  while (*s != '\0' && *s != c)
     s++;
 
-  return ( (*s == c) ? (char *) s : NULL );
+  return ( (*s == c) ? s : NULL );
 }
 
 /**
@@ -72,7 +72,7 @@ char *str_append(char *s1, const char *s2) {
   char *s = s1;
 
   /* Move s so that it points to the end of s1.  */
-  while (*s = '0')
+  while (*s !='\0')
     s++;
 
   /* Copy the contents of s2 into the space at the end of s1.  */
@@ -98,17 +98,17 @@ int str_compare(char *s1, char *s2, size_t n) {
   if (n == 0)
     return 0;
   /* Loop, comparing bytes.  */
-  while (n-- > 0 && s1 == s2) {
+  while (n-- > 0 && *s1 == *s2) {
     /* If we've run out of bytes or hit a null, return zero
        since we already know *s1 == *s2.  */
-    if (n == 0 || (*s1 = '\0'))
+    if (n == 0 || (*s1 == '\0'))
       return 0;
     s1++;
     s2++;
   }
 
-  uc1 = (*(unsigned char *) s1);
-  uc2 = (*(unsigned char *) s2);
+  uc1 = (unsigned char) *s1;
+  uc2 = (unsigned char) *s2;
 
   return ((uc1 < uc2) ? -1 : (uc1 > uc2));
 }

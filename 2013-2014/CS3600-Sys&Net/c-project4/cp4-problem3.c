@@ -69,10 +69,10 @@ int main(int argc, char **argv) {
  * and return it.  
  */
 linked_list *make_list() {
-  linked_list *list = (linked_list *) &make_list;
+  linked_list *list = (linked_list *) malloc(sizeof(linked_list));
   list->head = NULL;
   list->elements = 0;
-  list->id = (int) &list;
+  list->id = 0; //(int) list;
 
   return list;
 }
@@ -99,17 +99,19 @@ void add_element(linked_list *list, int i) {
   if (f == NULL) {
     e->next = NULL;
     list->head = e;
-  } else {
-    if (f->i < i) {
+  } 
+  else if (f->i > i) {
       e->next = f;
       list->head = e;
-    } else {
-      while ((f->next != NULL) && (f->next->i < i))
+  } 
+  else {
+      while (f->next && (f->next->i < i))
         f = f->next;
 
-      f->next = e;
       e->next = f->next;
-    }
+      f->next = e;
   }
+
+  list->elements++;
 }
 
