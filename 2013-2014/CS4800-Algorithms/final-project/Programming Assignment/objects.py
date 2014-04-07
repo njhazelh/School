@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import sys
 import time
@@ -56,9 +56,9 @@ def make_components():
 
 def output_result(satisfiable):
     if satisfiable:
-        sys.stdout.write('SATISFIABLE')
+        print('SATISFIABLE')
     else:
-        sys.stdout.write('NOT SATISFIABLE')
+        print('NOT SATISFIABLE')
 
 
 def has_conflicts():
@@ -89,15 +89,15 @@ def parse_line(hash_table, line):
 class Component:
     nodes = None
     size = 0
-    id = 0
+    #id = 0
 
-    def __init__(self, first_var, id):
+    def __init__(self, first_var):# id):
         self.nodes = [first_var]
         self.size = 1
-        self.id = id
+        #self.id = id
 
     def add(self, var):
-        if var.component.id != self.id:
+        if var.component != self:
             self.nodes.extend(var.component.nodes)
             self.size = len(self.nodes)
             for var_i in var.component.nodes:
@@ -117,7 +117,7 @@ class Variable:
     def __init__(self, name):
         global vars_seen
         self.name = name
-        self.component = Component(self, vars_seen)
+        self.component = Component(self)
         vars_seen += 1
 
     def __str__(self):
@@ -127,7 +127,7 @@ class Variable:
         return self.__str__()
 
     def same_component(self, other):
-        return self.component.id == other.component.id
+        return self.component == other.component
 
 
 class Constraint:
@@ -137,11 +137,11 @@ class Constraint:
 
     def __init__(self, var1, comp, var2):
         self.var1 = var1
-        self.comp = comp
+        self.comp = (comp == "==")
         self.var2 = var2
 
     def __str__(self):
-        return '{:s} {:s} {:s}'.format(str(self.var1), self.comp, str(self.var2))
+        return '{:s} {:s} {:s}'.format(str(self.var1), "==" if self.comp else "!=", str(self.var2))
 
     def __repr__(self):
         return self.__str__()
@@ -191,7 +191,7 @@ class VariableTable:
             var_hash = self.hash_variable(var_name)
         return len([x for x in self.array[var_hash] if x.name == var_name]) > 0
 
-    def get(self, var, var_hash=None):
+    def get(self, var, var_hash =  None):
         if var_hash is None:
             var_hash = self.hash_variable(var)
         result = [x for x in self.array[var_hash] if x.name == var]
