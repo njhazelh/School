@@ -79,12 +79,12 @@ def parse_line(line):
 
 
 class Component:
-    nodes = []
+    nodes = None
     size = 0
     id = 0
 
     def __init__(self, first_var, id):
-        self.nodes.append(first_var)
+        self.nodes = [first_var]
         self.size = 1
         self.id = id
 
