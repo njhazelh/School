@@ -1,0 +1,29 @@
+parse input
+
+build graph that maintains connections
+	
+
+calculate connected components
+
+check that n
+
+main:
+	read first line
+	set up list of variables
+	read other lines
+		for each new variable seen choose next variable object
+	
+
+Problems to solve:
+	fast comparison between variables
+		Variable objects with id values
+			makes comparing quick compared to comparing strings
+			ordered, so be be binary searched.
+	DFS of graph to form connected components
+	fast checking for in component
+	cleaning up memory after I don't need it (2.5 million is a lot)
+	minimize size of data structures
+	constant time access for variable object from string
+		hash table
+
+Try to keep it to O(n + m)

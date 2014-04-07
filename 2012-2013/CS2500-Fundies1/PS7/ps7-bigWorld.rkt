@@ -278,7 +278,7 @@
 0 0 -1 -1 2 1 #"\0"
 0 70 1 #"\0"
 1.0 0 -1 -1 -1 -1 -1 -1 1 0 0 0 0 0 0.0 0.0 0.0 1.0 1.0 1.0 0 0 255 0 0
-0 -1 -1           0 9744 0 4 3 85
+0 -1 -1           0 9743 0 4 3 85
 (
  #";; The first three lines of this file were inserted by DrRacket. The"
  #"y record metadata"
@@ -288,11 +288,11 @@
  #";; about the language level of this file in a form that our tools ca"
  #"n easily process."
 ) 0 0 4 29 1 #"\n"
-0 0 4 3 181
+0 0 4 3 190
 (
  #"#reader(lib \"htdp-intermediate-lambda-reader.ss\" \"lang\")((modnam"
- #"e ps7) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t "
- #"constructor repeating-decimal #f #t none #f ())))"
+ #"e ps7-bigWorld) (read-case-sensitive #t) (teachpacks ()) (htdp-setti"
+ #"ngs #(#t constructor repeating-decimal #f #t none #f ())))"
 ) 0 0 4 29 1 #"\n"
 0 0 18 3 2 #"#|"
 0 0 18 29 1 #"\n"
@@ -1377,8 +1377,7 @@
 0 0 25 3 1 #" "
 0 0 14 3 12 #"BULLET_R_VEL"
 0 0 25 3 1 #" "
-0 0 22 3 1 #"3"
-0 0 22 3 1 #"0"
+0 0 22 3 2 #"30"
 0 0 25 3 1 #")"
 0 0 25 29 1 #"\n"
 0 0 25 3 1 #"("
