@@ -6,7 +6,7 @@ import time
 __author__ = 'Nick'
 
 ne_constraints = []
-vars_seen = 0
+comps_seen = 0
 DEBUG = False
 
 def main():
@@ -42,8 +42,10 @@ def make_component(var1, var2):
     elif var1.component is None and not var2.component is None:
         var2.component.add(var1)
     elif var1.component is None and var2.component is None:
-        var1.component = Component(var1, vars_seen)
+        global comps_seen
+        var1.component = Component(var1, comps_seen)
         var1.component.add(var2)
+        comps_seen += 1
     elif var1.component.size > var2.component.size:
         var1.component.add(var2)
     else:
@@ -102,28 +104,27 @@ class Component(object):
                 var_i.component = self
 
     def __str__(self):
-        return str(self.nodes)
+        return '#{:d} : {:s}'.format(self.id, str(self.nodes))
 
     def __repr__(self):
         return self.__str__()
 
 
 class Variable(object):
-    __slots__ = ['component']
+    __slots__ = ['component', 'name']
 
-    def __init__(self):
-        global vars_seen
+    def __init__(self, name):
         self.component = None
-        vars_seen += 1
+        self.name = name
 
     def __str__(self):
-        return "<var>"
+        return self.name
 
     def __repr__(self):
         return self.__str__()
 
     def same_component(self, other):
-        return not self.component is None and not self.component is None and self.component.id == other.component.id
+        return not self.component is None and not other.component is None and self.component.id == other.component.id
 
 
 class NEConstraint(object):
@@ -170,7 +171,7 @@ class VariableTable:
         if self.contains(var_name, var_hash):
             return self.get(var_name, var_hash)
         else:
-            variable = Variable()
+            variable = Variable(var_name)
             if self.array[var_hash] is None:
                 self.array[var_hash] = variable
             else:
