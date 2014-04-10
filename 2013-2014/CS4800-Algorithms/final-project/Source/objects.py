@@ -5,23 +5,17 @@ import time
 
 __author__ = 'Nick'
 
-eq_constraints = []
 ne_constraints = []
-num_vars = 0
-num_constraints = 0
 vars_seen = 0
-variables = []
 DEBUG = False
-
 
 def main():
     start = time.clock()
     get_inputs()
     log("READ INPUT")
-    make_components()
     log("FINISHED MAKING COMPONENTS")
     output_result(not has_conflicts())
-    log('Runtime: {:f}'.format(time.clock() - start))
+    log('\nRuntime: {:f}'.format(time.clock() - start))
 
 
 def log(out):
@@ -30,28 +24,30 @@ def log(out):
 
 
 def get_inputs():
-    lines = sys.stdin.readlines()
-    log("READ LINES FROM FILE")
-    global num_vars
-    global num_constraints
-    num_vars, num_constraints = [int(x) for x in lines[0].split(' ')]
+    num_vars, num_constraints = (int(x) for x in sys.stdin.readline().split(' '))
     hash_table = VariableTable(num_vars)
 
-    for line in lines[1:]:
-        line = line.rstrip()
-        #log(line)
+    log("num vars: {:d}\nnum constraints: {:d}\n".format(num_vars, num_constraints))
+
+    for x in range(num_constraints):
+        line = sys.stdin.readline().rstrip()
         parse_line(hash_table, line)
 
     hash_table.print_table_health()
 
 
-def make_components():
-    for constraint in eq_constraints:
-        #print('Making: {:s}'.format(str(constraint)))
-        if constraint.var1.component.size > constraint.var2.component.size:
-            constraint.var1.component.add(constraint.var2)
-        else:
-            constraint.var2.component.add(constraint.var1)
+def make_component(var1, var2):
+    if not var1.component is None and var2.component is None:
+        var1.component.add(var2)
+    elif var1.component is None and not var2.component is None:
+        var2.component.add(var1)
+    elif var1.component is None and var2.component is None:
+        var1.component = Component(var1, vars_seen)
+        var1.component.add(var2)
+    elif var1.component.size > var2.component.size:
+        var1.component.add(var2)
+    else:
+        var2.component.add(var1)
 
 
 def output_result(satisfiable):
@@ -72,24 +68,22 @@ def has_conflicts():
     return False
 
 
-def add_constraint(constraint):
-    if constraint.comp == '==':
-        eq_constraints.append(constraint)
+def add_constraint(var1, comp, var2):
+    if comp == '==':
+        make_component(var1, var2)
     else:
-        ne_constraints.append(constraint)
+        ne_constraints.append(NEConstraint(var1, var2))
 
 
 def parse_line(hash_table, line):
     var1, comp, var2 = line.split(' ')
     var1 = hash_table.add(var1)
     var2 = hash_table.add(var2)
-    add_constraint(Constraint(var1, comp, var2))
+    add_constraint(var1, comp, var2)
 
 
-class Component:
-    nodes = None
-    size = 0
-    id = 0
+class Component(object):
+    __slots__ = ['nodes', 'size', 'id']
 
     def __init__(self, first_var, id):
         self.nodes = [first_var]
@@ -97,7 +91,11 @@ class Component:
         self.id = id
 
     def add(self, var):
-        if var.component.id != self.id:
+        if var.component is None:
+            self.nodes.append(var)
+            self.size += 1
+            var.component = self
+        elif var.component.id != self.id:
             self.nodes.extend(var.component.nodes)
             self.size = len(self.nodes)
             for var_i in var.component.nodes:
@@ -110,38 +108,33 @@ class Component:
         return self.__str__()
 
 
-class Variable:
-    name = None
-    component = None
+class Variable(object):
+    __slots__ = ['component']
 
-    def __init__(self, name):
+    def __init__(self):
         global vars_seen
-        self.name = name
-        self.component = Component(self, vars_seen)
+        self.component = None
         vars_seen += 1
 
     def __str__(self):
-        return self.name
+        return "<var>"
 
     def __repr__(self):
         return self.__str__()
 
     def same_component(self, other):
-        return self.component.id == other.component.id
+        return not self.component is None and not self.component is None and self.component.id == other.component.id
 
 
-class Constraint:
-    var1 = None
-    comp = None
-    var2 = None
+class NEConstraint(object):
+    __slots__ = ['var1', 'var2']
 
-    def __init__(self, var1, comp, var2):
+    def __init__(self, var1, var2):
         self.var1 = var1
-        self.comp = comp
         self.var2 = var2
 
     def __str__(self):
-        return '{:s} {:s} {:s}'.format(str(self.var1), self.comp, str(self.var2))
+        return '{:s} != {:s}'.format(str(self.var1), str(self.var2))
 
     def __repr__(self):
         return self.__str__()
@@ -153,14 +146,14 @@ class VariableTable:
 
     def __init__(self, size):
         self.size = size
-        self.array = [[] for _ in range(size)]
+        self.array = [None for _ in range(size)]
 
     def __str__(self):
         return str(self.array)
 
     def print_table_health(self):
         if DEBUG:
-            lengths = [len(x) for x in self.array]
+            lengths = [1 if not x is None else 0 for x in self.array]
             zeros = lengths.count(0)
             ones = lengths.count(1)
             collisions = len(self.array) - ones - zeros
@@ -169,11 +162,7 @@ class VariableTable:
                   .format(len(self.array), self.size, zeros, ones, collisions, max(lengths)))
 
     def hash_variable(self, var):
-        var_hash = 2166136261
-        for c in var[1:]:
-            var_hash = (var_hash * 16777619) ^ ord(c)
-        #print('hashed {:s} as {:d}'.format(var, var_hash))
-        return var_hash % self.size
+        return int(var[1:]) % self.size
 
     def add(self, var_name, var_hash=None):
         if var_hash is None:
@@ -181,25 +170,24 @@ class VariableTable:
         if self.contains(var_name, var_hash):
             return self.get(var_name, var_hash)
         else:
-            variable = Variable(var_name)
-            self.array[var_hash].append(variable)
-            variables.append(variable)
+            variable = Variable()
+            if self.array[var_hash] is None:
+                self.array[var_hash] = variable
+            else:
+                print("error: hash collision")
+                exit()
             return variable
 
     def contains(self, var_name, var_hash=None):
         if var_hash is None:
             var_hash = self.hash_variable(var_name)
-        return len([x for x in self.array[var_hash] if x.name == var_name]) > 0
+        return not self.array[var_hash] is None
 
     def get(self, var, var_hash=None):
         if var_hash is None:
             var_hash = self.hash_variable(var)
-        result = [x for x in self.array[var_hash] if x.name == var]
 
-        if len(result) == 0:
-            return None
-        else:
-            return result[0]
+        return self.array[var_hash]
 
 
 if __name__ == "__main__":
