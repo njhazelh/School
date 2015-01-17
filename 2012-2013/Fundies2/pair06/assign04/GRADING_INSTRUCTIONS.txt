@@ -1,0 +1,14 @@
+To keep it organized, we broke this program into two files.
+
+pong-client.rkt contains the client
+pong-server.rkt contains the server
+
+To run both files in conjunction:
+
+1.) Run pong-server.rkt and type (run-server) into the interactions window.
+
+2.) Run pong-client.rkt and type (launch-two-clients LOCALHOST) into the interactions window.
+	-  This will start two clients aimed at the local server
+	-  To aim at a different server-ip simply enter "<SERVER_IP>" instead of LOCALHOST
+
+;;> Many thanks for the instructions!

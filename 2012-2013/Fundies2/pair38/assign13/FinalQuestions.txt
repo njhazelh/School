@@ -1,0 +1,19 @@
+3. Termination. Prove that your courtship method terminates on all valid inputs, or give an example that causes courthship to run forever.
+
+A computation can be said to terminate if it's measure function (data -> Integer) decreases every iteration.  In this algorithm, a good measure function is the sum of the potential women remaining for each man.  Every time that a man proposes, a woman is removed from his list of potentials regardless of whether she says yes or not.  Eventually, each man will either run out of potentials or will find his mate.   Regardless, the operation will terminate.
+
+
+4. Correctness. Prove that your courtship method always produces a stable marriage for any valid inputs, or give an example that results in an unstable configuration.
+
+People:
+Man1: Woman1 Woman2
+Man2: Woman1 Woman2
+Woman1: Man1 Man2
+Woman2: Man1 Man2
+
+Engagments:
+Man1 -> Woman1 : yes
+Man2 -> Woman1 : no
+Man2 -> Woman2 : yes
+
+In this example, Man1 and Woman1 are happily married; however, Man2 would rather be with Woman1, and Woman2 would rather be with Man1.  As such, Man2 and Woman2 are not happily married. This is still the optimal solution, since the best two people are together, and the worst two people are together.
