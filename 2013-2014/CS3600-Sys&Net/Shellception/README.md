@@ -1,0 +1,16 @@
+Shellception
+============
+Students: Nicholas Jones, Victor Monterroso
+-------------------------------------------
+
+This program is a shell written for CS3600 (Systems and Networks) in Spring 2014 at Northeastern University.
+
+Starting out, both of us had experience writing shells from taking Computer Organization, CS2600.  The biggest difference between the shell that we wrote last semester and this semester was that this shell required arbitrary length input size and escape characters.
+
+To deal with the arbitrary length input, we decided to use a character queue.  As each character was read from the keyboard we would dynamically allocate memory for it in a doubly linked list that had a head pointing to both the first and last elements.  Upon reading all the characters, we could then go though the the list and build our array of arguments.  In our opinion, this approach worked well. This was because the C Bootcamp exercises had made us familiar with the doubly linked list structure and it was a way for us to allow arbitrarily long input without causing a major headache.
+
+One of the first major problems we faced was that we did not know that we had to terminate our array of strings argument to execvp with a null pointer.  Because we did not do that to begin with, we kept getting a 'bad address' error. At first, we were quite confused because we knew were had given execvp the proper arguments.  At first, we thought we weren't properly freeing the dynamically allocated memory we had given the arguments we were taking in and formatting. However, that was not the case.  Then, we decided to look online, as surely someone in this world had encountered that error before. Upon researching, we found out that the error was 'errno 14', which was caused by not null terminating our arguments.  It made sense because it was a way for us to indicate that our arguments had been finished, as opposed to having some sort of junk value there that was being read as an argument.
+
+The next problem was the escape characters and redirection. We decided to tackle that problem by adding an 'escape' element to our doubly linked list element structure to indicate whether or not the element's character was an escape character.  This was necessary because when we filtered out extra white space and used one space between other characters as a delimiter for separating words. By having a boolean that indicated whether or not it was an escaped character, we knew whether or not it was filler space or space that had to be eaten. We uses the function where we read from standard input as the function to search for '\' and based on the next character, insert the appropriate element into our doubly linked list.  In hindsight, we think that we should have stuck with the character queue for a little longer and done filtering there, since it contained information that would have made syntax checking simpler.  At the time, however, we did not have this foresight.  Instead, we iterated though the strings in our argument array.  While this approach worked, preserving the structure of the data for a little longer may have helped.
+
+We have not implemented any additional features other than those required by the assignment, though we are proud of the way we implemented this project.

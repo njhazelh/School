@@ -1,0 +1,14 @@
+These were a few tips from my friend that just finished the project:
+I wouldn't make a PC module, by the way.
+Just calculate a "next pc" and assign it to the pc every posedge of the clock cycle.
+Then continuously assign pc to the instruction address.
+Also, make sure to start your pc at 0x00001000
+That took us a while to figure out.
+Also, make sure to time the reg writing with the positive edge of the clock.
+Then, update the reads every time their selects change.
+These pointers literally took us hours to figure out, so I hope that saves you time.
+And take advantage of the boolean logic available to you.
+Namely, assign the "branch select" for the branch mux to be equal to branch & zero.
+Take advantage of those assignment statements and feeding specific bits directly into things
+(instruction [15:0], etc...). It really simplifies the coding, because you don't need to have a new wire.
+Calculate next pc, then assign it to pc on the posedge of the clock if it's not 32'hx.
