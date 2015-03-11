@@ -8,11 +8,11 @@ The grammar:
             | { * <BRANG> <BRANG> }
             | { / <BRANG> <BRANG> }
             | { with { <id> <BRANG> } <BRANG> }
-            | { bind { { <id> <BRANG> } ...} BRANG }
-            | { bind* { { <id> <BRANG> } ...} BRANG }
             | <id>
-            | { fun { <id> <id> ... } <BRANG> }
-            | { call <BRANG> <BRANG> <BRANG> ... }
+            | { fun { <id> ... } <BRANG> }
+            | { call <BRANG> <BRANG> ... }
+            | { bind { { <id> <BRANG> } { <id> <BRANG> } ... } <BRANG> }
+            | { bind* { { <id> <BRANG> } { <id> <BRANG> } ... } <BRANG> }
 
 Core evaluation rules:
   eval(N,env)                = N
@@ -38,7 +38,10 @@ language that users actually see.
   [Id   Symbol]
   [With Symbol BRANG BRANG]
   [Fun  (Listof (U Symbol Boolean)) BRANG]
-  [Call BRANG (Listof BRANG)])
+  [Call BRANG (Listof BRANG)]
+  [Bind (Listof (List Symbol BRANG)) BRANG]
+  [Bind* (Listof (List Symbol BRANG)) BRANG])
+  
 
 (define-type CORE
   [CNum  Number]
@@ -53,6 +56,9 @@ language that users actually see.
 (: parse-sexpr : Sexpr -> BRANG)
 ;; to convert s-expressions into BRANGs
 (define (parse-sexpr sexpr)
+  (: parse-bind : Symbol Sexpr -> (List Symbol BRANG))
+  (define (parse-bind name named) (list name
+                                        (parse-sexpr named)))
   (match sexpr
     [(number: n)    (Num n)]
     [(symbol: name) (Id name)]
@@ -78,6 +84,15 @@ language that users actually see.
         (Call (parse-sexpr fun) (map parse-sexpr (cons arg args)))]
        [(list 'call fun)
         (Call (parse-sexpr fun) (list (Num 0)))])]
+    [(cons (symbol: (or 'bind 'bind*)) more)
+     (match sexpr
+       [(list 'bind (list (list (symbol: name) (sexpr: named)) ..1) body)
+        (Bind (map parse-bind name named)
+              (parse-sexpr body))]
+       [(list 'bind* (list (list (symbol: name) (sexpr: named)) ..1) body)
+        (Bind* (map parse-bind name named)
+               (parse-sexpr body))]
+       [else (error 'parse-sexpr "bad `bind' or `bind*' syntax in ~s" sexpr)])]
     [else (error 'parse-sexpr "bad syntax in ~s" sexpr)]))
 
 (: parse : String -> BRANG)
@@ -121,6 +136,10 @@ language that users actually see.
 (define (preprocess expr de-env)
   (: sub : BRANG -> CORE)
   (define (sub expr) (preprocess expr de-env))
+  (: get-id : (List Symbol BRANG) -> Symbol)
+  (define (get-id bind) (first bind))
+  (: get-named : (List Symbol BRANG) -> BRANG)
+  (define (get-named bind) (second bind))
   (cases expr
     [(Num n)   (CNum n)]
     [(Add l r) (CAdd (sub l) (sub r))]
@@ -147,7 +166,19 @@ language that users actually see.
        (CCall (sub fun-expr) (sub (first arg-exprs)))
        ;; and a similar choice here too
        (sub (Call (Call fun-expr (list (first arg-exprs)))
-                  (rest arg-exprs))))]))
+                  (rest arg-exprs))))]
+    [(Bind binds body)
+     (sub (Call (Fun (map get-id binds) body) (map get-named binds)))]
+    [(Bind* binds body)
+     (let ([arg-exprs (map get-named binds)]
+           [bound-ids (map get-id binds)]) 
+       (if (= (length binds) 1)
+           (sub (Call (Fun (list (first bound-ids))
+                           body)
+                      (list (first arg-exprs))))
+           (CCall (CFun (preprocess (Bind* (rest binds) body)
+                                    (de-extend de-env (first bound-ids))))
+                  (sub (first arg-exprs)))))]))
 
 (: NumV->number : VAL -> Number)
 ;; convert a FLANG runtime numeric value to a Racket one
@@ -233,7 +264,7 @@ language that users actually see.
 (test (run "{call {fun {x} } 4}")
       =error> "bad `fun' syntax")
 (test (run "{fun {} 1}")
-      =error> "`fun' with no arguments")
+      =error> "evaluation returned a non-number")
 (test (run "{with {y} }")
       =error> "bad `with' syntax")
 (test (run "{fun {x} {+ x x}}")
@@ -244,20 +275,29 @@ language that users actually see.
       =error> "arith-op: expected a number")
 (test (run "{call 1 1}")
       =error> "expects a function")
-(test (run "{call {fun {x} x}}")
-      =error> "missing arguments to `call'")
 
 ;; test multiple-argument functions
 (test (run "{with {add {fun {x y} {+ x y}}} {call add 7 8}}")
       => 15)
 (test (run "{with {add {fun {x y} {- x y}}} {call add 10 4}}")
       => 6)
+(test (run "{call {fun {a b c d} {+ 1 {- a {* b {/ c d}}}}} 1 2 3 3}") => 0)
 
 ;; Differences:
 (test (run "{with {f {fun {x y} y}} {call {call f 1} 2}}") => 2)
 (test (run "{call {fun {x x} x} 3 2}") => 2)
-(test (run "{call {fun {} 3}}") =error>  "missing arguments to")
+;; Test fails because no-arg functionality added.
+;;(test (run "{call {fun {} 3}}") =error>  "missing arguments to")
+
+;; Test Extending Binders
+(test (run "{bind {{x 1} {y 2}} {+ x y}}") => 3)
+(test (run "{bind* {{x 1} {y x}} {+ x y}}") => 2)
+(test (run "{bind* {{x 1} {y x} {z {+ x y}}} {- {+ x y} z}}") => 0)
+(test (run "{bind bad}") =error> "bad `bind' or `bind*' syntax")
 
 ;; Tests for Extending Function Arguments II:
-(test (run "{call {fun {x} x}}") =error> "evaluation returned a non-number")
+(test (number? (run "{call {fun {x} x}}")) => #t)
 (test (run "{with {dummy 1} {call {fun {} dummy}}}") => 1)
+(test (run "{call {fun {} 3}}") => 3)
+
+(define minutes-spent 360)
