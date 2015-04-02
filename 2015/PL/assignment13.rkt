@@ -47,24 +47,24 @@
     [(cons (and binder (or 'bind 'bindrec)) more)
      (match sexpr
        [(list _ (list (list (symbol: names) (sexpr: nameds)) ...)
-          (sexpr: body0) (sexpr: body) ...)
+              (sexpr: body0) (sexpr: body) ...)
         (if (unique-list? names)
-          ((if (eq? 'bind binder) Bind BindRec)
-           names
-           (map parse-sexpr nameds)
-           (map parse-sexpr (cons body0 body)))
-          (error 'parse-sexpr "duplicate `~s' names: ~s" binder names))]
+            ((if (eq? 'bind binder) Bind BindRec)
+             names
+             (map parse-sexpr nameds)
+             (map parse-sexpr (cons body0 body)))
+            (error 'parse-sexpr "duplicate `~s' names: ~s" binder names))]
        [else (error 'parse-sexpr "bad `~s' syntax in ~s"
                     binder sexpr)])]
     [(cons (and funner (or 'fun 'rfun)) more)
      (match sexpr
        [(list _ (list (symbol: names) ...)
-          (sexpr: body0) (sexpr: body) ...)
+              (sexpr: body0) (sexpr: body) ...)
         (if (unique-list? names)
-          ((if (eq? 'fun funner) Fun RFun)
-           names
-           (map parse-sexpr (cons body0 body)))
-          (error 'parse-sexpr "duplicate `~s' names: ~s" funner names))]
+            ((if (eq? 'fun funner) Fun RFun)
+             names
+             (map parse-sexpr (cons body0 body)))
+            (error 'parse-sexpr "duplicate `~s' names: ~s" funner names))]
        [else (error 'parse-sexpr "bad `~s' syntax in ~s"
                     funner sexpr)])]
     [(cons 'if more)
@@ -106,11 +106,11 @@
 ;; boxes
 (define (raw-extend names boxed-values env)
   (if (= (length names) (length boxed-values))
-    (FrameEnv (map (lambda ([name : Symbol] [boxed-val : (Boxof VAL)])
-                     (list name boxed-val))
-                   names boxed-values)
-              env)
-    (error 'raw-extend "arity mismatch for names: ~s" names)))
+      (FrameEnv (map (lambda ([name : Symbol] [boxed-val : (Boxof VAL)])
+                       (list name boxed-val))
+                     names boxed-values)
+                env)
+      (error 'raw-extend "arity mismatch for names: ~s" names)))
 
 (: extend : (Listof Symbol) (Listof VAL) ENV -> ENV)
 ;; extends an environment with a new frame (given plain values).
@@ -153,8 +153,8 @@
     [(FrameEnv frame rest)
      (let ([cell (assq name frame)])
        (if cell
-         (second cell)
-         (lookup name rest)))]))
+           (second cell)
+           (lookup name rest)))]))
 
 (: unwrap-rktv : VAL -> Any)
 ;; helper for `racket-func->prim-val': unwrap a RktV wrapper in
@@ -200,8 +200,8 @@
   (let ([1st  (eval (first exprs) env)]
         [rest (rest exprs)])
     (if (null? rest)
-      1st
-      (eval-body rest env)))
+        1st
+        (eval-body rest env)))
   ;; a shorter version that uses `foldl'
   ;; (foldl (lambda ([expr : TOY] [old : VAL]) (eval expr env))
   ;;        (eval (first exprs) env)
@@ -247,18 +247,18 @@
          [(PrimV proc) (proc (arg-vals))]
          [(FunV names body fun-env byref?)
           (eval-body body (if byref?
-                            (raw-extend names
-                                        (get-boxes arg-exprs env)
-                                        fun-env)
-                            (extend names (arg-vals) fun-env)))]
+                              (raw-extend names
+                                          (get-boxes arg-exprs env)
+                                          fun-env)
+                              (extend names (arg-vals) fun-env)))]
          [else (error 'eval "function call with a non-function: ~s"
                       fval)]))]
     [(If cond-expr then-expr else-expr)
      (eval* (if (cases (eval* cond-expr)
                   [(RktV v) v] ; Racket value => use as boolean
                   [else #t])   ; other values are always true
-              then-expr
-              else-expr))]))
+                then-expr
+                else-expr))]))
 
 (: run : String -> Any)
 ;; evaluate a TOY program contained in a string
